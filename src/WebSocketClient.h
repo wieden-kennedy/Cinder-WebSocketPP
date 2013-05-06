@@ -2,8 +2,6 @@
 
 #include "boost/signals2.hpp"
 #include "cinder/Buffer.h"
-#include <mutex>
-#include <thread>
 
 #include "websocketpp/config/asio_no_tls_client.hpp"
 #include "websocketpp/client.hpp"
@@ -17,6 +15,7 @@ public:
 	void						connect( const std::string& uri );
 	void						disconnect();
 	void						ping();
+	void						poll();
 	void						write( const std::string& msg );
 
 	template<typename T, typename Y>
@@ -72,8 +71,6 @@ private:
 	typedef websocketpp::client<websocketpp::config::asio_client>	Client;
 	typedef websocketpp::config::asio_client::message_type::ptr		MessageRef;
 
-	typedef std::shared_ptr<std::thread>	ThreadRef;
-
 	typedef boost::signals2::connection		Callback;
 	typedef std::shared_ptr<Callback>		CallbackRef;
 	typedef std::map<uint32_t, CallbackRef>	CallbackList;
@@ -88,7 +85,6 @@ private:
 
 	Client						mClient;
 	websocketpp::connection_hdl	mHandle;
-	ThreadRef					mThread;
 
 	CallbackList									mCallbacks;
 	boost::signals2::signal<void ()>				mSignalConnect;

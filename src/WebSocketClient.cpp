@@ -11,6 +11,7 @@ WebSocketClient::WebSocketClient()
 {
 	mClient.clear_access_channels( websocketpp::log::alevel::all );
 	mClient.clear_error_channels( websocketpp::log::elevel::all );
+	
 	mClient.init_asio();
 
 	mClient.set_close_handler( websocketpp::lib::bind( &WebSocketClient::onDisconnect, this, &mClient, ::_1 ) );
@@ -23,9 +24,9 @@ WebSocketClient::WebSocketClient()
 
 WebSocketClient::~WebSocketClient()
 {
-	if ( mThread ) {
+	if ( !mClient.stopped() ) {
+		disconnect();
 		mClient.stop();
-		mThread->join();
 	}
 }
 
@@ -39,7 +40,6 @@ void WebSocketClient::connect( const std::string& uri )
 		} else {
 			if ( conn ) {
 				mClient.connect( conn );
-				mThread = std::shared_ptr<thread>( new thread( &Client::run, &mClient ) );
 			} else {
 				mSignalError( "Unable to resolve address." );
 			}
@@ -65,10 +65,15 @@ void WebSocketClient::disconnect()
 void WebSocketClient::ping()
 {
 	websocketpp::lib::error_code err;
-	mClient.send( mHandle, 0, websocketpp::frame::opcode::PING, err );
+	mClient.send( mHandle, "", websocketpp::frame::opcode::PING, err );
 	if ( err ) {
 		mSignalError( err.message() );
 	}
+}
+
+void WebSocketClient::poll()
+{
+	mClient.poll();
 }
 
 void WebSocketClient::write( const std::string& msg )

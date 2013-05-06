@@ -149,6 +149,8 @@ void EchoClientApp::setup()
 
 void EchoClientApp::update()
 {
+	mClient.poll();
+
 	mFrameRate = getFrameRate();
 
 	if ( mFullScreen != isFullScreen() ) {
