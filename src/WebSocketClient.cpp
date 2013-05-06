@@ -65,7 +65,7 @@ void WebSocketClient::disconnect()
 void WebSocketClient::ping()
 {
 	websocketpp::lib::error_code err;
-	mClient.send( mHandle, "", websocketpp::frame::opcode::PING, err );
+	mClient.send( mHandle, 0, 0, websocketpp::frame::opcode::PING, err );
 	if ( err ) {
 		mSignalError( err.message() );
 	}

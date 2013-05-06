@@ -159,7 +159,7 @@ void EchoClientApp::update()
 
 	double e = getElapsedSeconds();
 	if ( mPing && e - mPingTime > 3.0 ) {
-		mClient.ping();
+		mClient.ping(); // TODO ping is always returning error -- fix
 		mPingTime = e;
 	}
 
