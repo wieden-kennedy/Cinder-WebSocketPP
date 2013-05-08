@@ -39,6 +39,8 @@
 
 namespace websocketpp {
 
+using namespace std;
+	
 namespace istate = session::internal_state;
 
 template <typename config>

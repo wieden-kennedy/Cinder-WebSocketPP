@@ -54,6 +54,8 @@
 namespace websocketpp {
 namespace processor {
 
+using namespace std;
+
 template <typename config>
 class hybi13 : public processor<config> {
 public:
