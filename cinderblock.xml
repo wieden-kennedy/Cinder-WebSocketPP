@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<cinder>
+<block
+	name="Cinder-WebSocketPP"
+	id="com.bantherewind.websocketpp"
+	author="Stephen Schieberl"
+	license="BSD"
+	summary="A wrapper for the library WebSocketPP"
+	version="0.3.x"
+	library="https://github.com/zaphoyd/websocketpp"
+	url="https://github.com/BanTheRewind/Cinder-WebSocketPP"
+	>
+	<supports os="macosx" />
+	<supports os="msw" />
+	
+	
+	<sourcePattern>src/*.cpp</sourcePattern>
+	<sourcePattern>src/websocketpp/md5/*.cpp</sourcePattern>
+	<sourcePattern>src/websocketpp/sha1/sha1.cpp</sourcePattern>
+	
+	<headerPattern>src/*.h</headerPattern>
+	<headerPattern>src/websocketpp/*.hpp</headerPattern>
+	<headerPattern>src/websocketpp/base64/*.h</headerPattern>
+	<headerPattern>src/websocketpp/common/*.h</headerPattern>
+	<headerPattern>src/websocketpp/concurrency/*.h</headerPattern>
+	<headerPattern>src/websocketpp/config/*.h</headerPattern>
+	<headerPattern>src/websocketpp/extensions/*.h</headerPattern>
+	<headerPattern>src/websocketpp/extensions/permessage_deflate/*.h</headerPattern>
+	<headerPattern>src/websocketpp/http/*.h</headerPattern>
+	<headerPattern>src/websocketpp/http/impl/*.h</headerPattern>
+	<headerPattern>src/websocketpp/impl/*.h</headerPattern>
+	<headerPattern>src/websocketpp/logger/*.h</headerPattern>
+	<headerPattern>src/websocketpp/md5/*.h</headerPattern>
+	<headerPattern>src/websocketpp/message_buffer/*.h</headerPattern>
+	<headerPattern>src/websocketpp/processors/*.h</headerPattern>
+	<headerPattern>src/websocketpp/random/*.h</headerPattern>
+	<headerPattern>src/websocketpp/roles/*.h</headerPattern>
+	<headerPattern>src/websocketpp/sha1/*.h</headerPattern>
+	<headerPattern>src/websocketpp/transport/*.h</headerPattern>	
+	
+	<includePath>src</includePath>
+	<platform os="macosx">
+		<setting name="ALWAYS_SEARCH_USER_PATHS">YES</setting>
+		<libraryPath>lib/macosx</libraryPath>
+		<staticLibrary>lib/macosx/libboost_random.a</staticLibrary>
+		<staticLibrary>lib/macosx/libboost_regex.a</staticLibrary>
+	</platform>
+	<platform os="msw">
+		<libraryPath>lib/msw</libraryPath>
+		<staticLibrary>lib/msw/libboost_random-vc110-mt-s-1_53.lib</staticLibrary>
+		<staticLibrary>lib/msw/libboost_random-vc110-mt-sgd-1_53.lib</staticLibrary>
+	</platform>
+</block>
+</cinder>
