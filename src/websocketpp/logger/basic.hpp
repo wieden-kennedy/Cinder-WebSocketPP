@@ -25,8 +25,8 @@
  * 
  */
 
-#ifndef WEBSOCKETPP_LOGGER_HPP
-#define WEBSOCKETPP_LOGGER_HPP
+#ifndef WEBSOCKETPP_LOGGER_BASIC_HPP
+#define WEBSOCKETPP_LOGGER_BASIC_HPP
 
 /* Need a way to print a message to the log
  * 
@@ -68,8 +68,8 @@ public:
     
     void set_channels(level channels) {
         if (channels == names::none) {
-        	clear_channels(names::all);
-        	return;
+            clear_channels(names::all);
+            return;
         }
         
         scoped_lock_type lock(m_lock);
@@ -104,27 +104,27 @@ public:
     }
     
     bool dynamic_test(level channel) {
-	    return ((channel & m_dynamic_channels) != 0);
-	}
+        return ((channel & m_dynamic_channels) != 0);
+    }
 private:
     typedef typename concurrency::scoped_lock_type scoped_lock_type;
-	typedef typename concurrency::mutex_type mutex_type;
-	
+    typedef typename concurrency::mutex_type mutex_type;
+    
     const char* get_timestamp() {
         std::time_t t = std::time(NULL);
         std::strftime(buffer,39,"%Y-%m-%d %H:%M:%S%z",std::localtime(&t));
         return buffer;
     }
 
-	mutex_type m_lock;
-		
+    mutex_type m_lock;
+        
     char buffer[40];
     const level m_static_channels;
     level m_dynamic_channels;
     std::ostream* m_out;
 };
 
-} // logger
+} // log
 } // websocketpp
 
-#endif //WEBSOCKETPP_LOGGER_HPP
+#endif // WEBSOCKETPP_LOGGER_BASIC_HPP

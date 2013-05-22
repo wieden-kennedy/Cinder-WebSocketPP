@@ -28,9 +28,8 @@
 #ifndef WEBSOCKETPP_CONFIG_CORE_HPP
 #define WEBSOCKETPP_CONFIG_CORE_HPP
 
-
-
 // Non-Policy common stuff
+#include <websocketpp/common/platforms.hpp>
 #include <websocketpp/common/cpp11.hpp>
 #include <websocketpp/common/stdint.hpp>
 
@@ -69,34 +68,61 @@ struct core {
     
     // Concurrency policy
     typedef websocketpp::concurrency::basic concurrency_type;
-	
+    
     // HTTP Parser Policies
     typedef http::parser::request request_type;
     typedef http::parser::response response_type;
 
     // Message Policies
     typedef message_buffer::message<message_buffer::alloc::con_msg_manager> 
-		message_type;
+        message_type;
     typedef message_buffer::alloc::con_msg_manager<message_type> 
-		con_msg_manager_type;
+        con_msg_manager_type;
     typedef message_buffer::alloc::endpoint_msg_manager<con_msg_manager_type> 
-		endpoint_msg_manager_type;
-	
-	/// Logging policies
-	typedef websocketpp::log::basic<concurrency_type,
-	    websocketpp::log::elevel> elog_type;
-	typedef websocketpp::log::basic<concurrency_type,
-	    websocketpp::log::alevel> alog_type;
-	
-	/// RNG policies
-	typedef websocketpp::random::none::int_generator<uint32_t> rng_type;
-	
+        endpoint_msg_manager_type;
+    
+    /// Logging policies
+    typedef websocketpp::log::basic<concurrency_type,
+        websocketpp::log::elevel> elog_type;
+    typedef websocketpp::log::basic<concurrency_type,
+        websocketpp::log::alevel> alog_type;
+    
+    /// RNG policies
+    typedef websocketpp::random::none::int_generator<uint32_t> rng_type;
+    
     struct transport_config {
         typedef type::concurrency_type concurrency_type;
         typedef type::elog_type elog_type;
         typedef type::alog_type alog_type;
         typedef type::request_type request_type;
         typedef type::response_type response_type;
+        
+        /// Default timer values (in ms)
+        
+        /// Length of time to wait for socket pre-initialization
+        /**
+         * Exactly what this includes depends on the socket policy in use
+         */
+        static const long timeout_socket_pre_init = 5000;
+        
+        /// Length of time to wait before a proxy handshake is aborted
+        static const long timeout_proxy = 5000;
+        
+        /// Length of time to wait for socket post-initialization
+        /**
+         * Exactly what this includes depends on the socket policy in use.
+         * Often this means the TLS handshake
+         */
+        static const long timeout_socket_post_init = 5000;
+        
+        /// Length of time to wait for dns resolution
+        static const long timeout_dns_resolve = 5000;
+        
+        /// Length of time to wait for TCP connect
+        static const long timeout_connect = 5000;
+        
+        /// Length of time to wait for socket shutdown
+        static const long timeout_socket_shutdown = 5000;
     };
 
     /// Transport Endpoint Component
@@ -107,6 +133,15 @@ struct core {
     typedef websocketpp::endpoint_base endpoint_base;
     /// User overridable Connection base class
     typedef websocketpp::connection_base connection_base;
+    
+    /// Default timer values (in ms)
+    
+    /// Length of time before an opening handshake is aborted
+    static const long timeout_open_handshake = 5000;
+    /// Length of time before a closing handshake is aborted
+    static const long timeout_close_handshake = 5000;
+    /// Length of time to wait for a pong after a ping
+    static const long timeout_pong = 5000;
     
     /// WebSocket Protocol version to use as a client
     /**
@@ -143,7 +178,7 @@ struct core {
         websocketpp::log::alevel::all ^ websocketpp::log::alevel::devel;
     
     /// 
-	static const size_t connection_read_buffer_size = 512;
+    static const size_t connection_read_buffer_size = 512;
     
     /// Drop connections immediately on protocol error. 
     /** 

@@ -39,6 +39,27 @@
 #include <iostream>
 #include <string>
 
+// Interface that sockets/security policies must impliment
+
+/**
+ * Endpoint Interface
+ *
+ * bool is_secure() const;
+ * @return Wether or not the endpoint creates secure connections
+ *
+ * lib::error_code init(socket_con_ptr scon);
+ * Called by the transport after a new connection is created to initialize
+ * the socket component of the connection.
+ * @param scon Pointer to the socket component of the connection
+ * @return Error code (empty on success)
+ */
+
+
+/// Connection
+/// TODO
+/// pre_init(init_handler);
+/// post_init(init_handler);
+
 namespace websocketpp {
 namespace transport {
 namespace asio {
@@ -49,6 +70,7 @@ namespace socket {
  * policies and support code for the ASIO transport types.
  */
 
+/// Errors related to asio transport sockets
 namespace error {
     enum value {
         /// Catch-all error for security policy errors that don't fit in other
@@ -77,6 +99,7 @@ namespace error {
     };
 } // namespace error
 
+/// Error category related to asio transport socket policies
 class socket_category : public lib::error_category {
 public:
     const char *name() const _WEBSOCKETPP_NOEXCEPT_TOKEN_ {
@@ -110,10 +133,11 @@ inline const lib::error_category& get_socket_category() {
     return instance;
 }
 
-inline lib::error_code make_error(error::value e) {
+inline lib::error_code make_error_code(error::value e) {
     return lib::error_code(static_cast<int>(e), get_socket_category());
 }
 
+/// Type of asio transport socket policy initialization handlers
 typedef lib::function<void(const lib::error_code&)> init_handler;
 
 } // namespace socket

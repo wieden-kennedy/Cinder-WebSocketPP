@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Peter Thorson. All rights reserved.
+ * Copyright (c) 2013, Peter Thorson. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -70,6 +70,7 @@ typedef lib::function<void(const lib::error_code&)> init_handler;
 typedef lib::function<void(const lib::error_code&,size_t)> read_handler;
 typedef lib::function<void(const lib::error_code&)> write_handler;
 typedef lib::function<void(const lib::error_code&)> timer_handler;
+typedef lib::function<void(const lib::error_code&)> shutdown_handler;
 typedef lib::function<void()> inturrupt_handler;
 typedef lib::function<void()> dispatch_handler;
 
@@ -104,44 +105,54 @@ enum value {
     operation_not_supported,
     
     /// End of file
-    eof
+    eof,
+    
+    /// TLS short read
+    tls_short_read,
+    
+    /// Timer expired
+    timeout
 };
 
 class category : public lib::error_category {
     public:
-	category() {}
+    category() {}
 
-	const char *name() const _WEBSOCKETPP_NOEXCEPT_TOKEN_ {
-		return "websocketpp.transport";
-	}
-	
-	std::string message(int value) const {
-		switch(value) {
-			case general:
-				return "Generic transport policy error";
-			case pass_through:
-				return "Underlying Transport Error";
-			case invalid_num_bytes:
-				return "async_read_at_least call requested more bytes than buffer can store";
-			case operation_aborted:
-				return "The operation was aborted";
-			case operation_not_supported:
-				return "The operation is not supported by this transport";
-			case eof:
-				return "End of File";
-			default:
-				return "Unknown";
-		}
-	}
+    const char *name() const _WEBSOCKETPP_NOEXCEPT_TOKEN_ {
+        return "websocketpp.transport";
+    }
+    
+    std::string message(int value) const {
+        switch(value) {
+            case general:
+                return "Generic transport policy error";
+            case pass_through:
+                return "Underlying Transport Error";
+            case invalid_num_bytes:
+                return "async_read_at_least call requested more bytes than buffer can store";
+            case operation_aborted:
+                return "The operation was aborted";
+            case operation_not_supported:
+                return "The operation is not supported by this transport";
+            case eof:
+                return "End of File";
+        	case tls_short_read:
+                return "TLS Short Read";
+            case timeout:
+                return "Timer Expired";
+            default:
+                return "Unknown";
+        }
+    }
 };
 
 inline const lib::error_category& get_category() {
-	static category instance;
-	return instance;
+    static category instance;
+    return instance;
 }
 
 inline lib::error_code make_error_code(error::value e) {
-	return lib::error_code(static_cast<int>(e), get_category());
+    return lib::error_code(static_cast<int>(e), get_category());
 }
 
 } // namespace error

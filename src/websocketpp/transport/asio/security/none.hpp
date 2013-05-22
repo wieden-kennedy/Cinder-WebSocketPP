@@ -148,7 +148,7 @@ protected:
      */
     lib::error_code init_asio (io_service_ptr service, bool is_server) {
         if (m_state != UNINITIALIZED) {
-            return socket::make_error(socket::error::invalid_state);
+            return socket::make_error_code(socket::error::invalid_state);
         }
         
         m_socket.reset(new boost::asio::ip::tcp::socket(*service));
@@ -158,10 +158,18 @@ protected:
         return lib::error_code();
     }
     
-    /// Initialize security policy for reading
-    void init(init_handler callback) {
+    /// Pre-initialize security policy
+    /**
+     * Called by the transport after a new connection is created to initialize
+     * the socket component of the connection. This method is not allowed to 
+     * write any bytes to the wire. This initialization happens before any 
+     * proxies or other intermediate wrappers are negotiated.
+     * 
+     * @param callback Handler to call back with completion information
+     */
+    void pre_init(init_handler callback) {
         if (m_state != READY) {
-            callback(socket::make_error(socket::error::invalid_state));
+            callback(socket::make_error_code(socket::error::invalid_state));
             return;
         }
         
@@ -171,6 +179,18 @@ protected:
         
         m_state = READING;
         
+        callback(lib::error_code());
+    }
+    
+    /// Post-initialize security policy
+    /**
+     * Called by the transport after all intermediate proxies have been 
+     * negotiated. This gives the security policy the chance to talk with the
+     * real remote endpoint for a bit before the websocket handshake.
+     * 
+     * @param callback Handler to call back with completion information
+     */
+    void post_init(init_handler callback) {
         callback(lib::error_code());
     }
     
@@ -184,12 +204,20 @@ protected:
     void set_handle(connection_hdl hdl) {
         m_hdl = hdl;
     }
-
-    void shutdown() {
+    
+    /// Cancel all async operations on this socket
+    void cancel_socket() {
+        m_socket->cancel();
+    }
+    
+    void async_shutdown(socket_shutdown_handler h) {
         boost::system::error_code ec;
         m_socket->shutdown(boost::asio::ip::tcp::socket::shutdown_both,ec);
-
-        // TODO: handle errors
+        h(ec);
+    }
+    
+    lib::error_code get_ec() const {
+        return lib::error_code();
     }
 private:
     enum state {
@@ -200,7 +228,7 @@ private:
     
     socket_ptr          m_socket;
     state               m_state;
-
+        
     connection_hdl      m_hdl;
     socket_init_handler m_socket_init_handler;
 };
@@ -242,15 +270,19 @@ public:
     void set_socket_init_handler(socket_init_handler h) {
         m_socket_init_handler = h;
     }
-
 protected:
     /// Initialize a connection
     /**
      * Called by the transport after a new connection is created to initialize
      * the socket component of the connection.
+     * 
+     * @param scon Pointer to the socket component of the connection
+     *
+     * @return Error code (empty on success)
      */
-    void init(socket_con_ptr scon) {
+    lib::error_code init(socket_con_ptr scon) {
         scon->set_socket_init_handler(m_socket_init_handler);
+        return lib::error_code();
     }
 private:
     socket_init_handler m_socket_init_handler;
