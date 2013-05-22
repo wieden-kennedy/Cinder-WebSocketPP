@@ -14,7 +14,7 @@ public:
 
 	void						connect( const std::string& uri );
 	void						disconnect();
-	void						ping();
+	void						ping( const std::string& msg = "" );
 	void						poll();
 	void						write( const std::string& msg );
 

@@ -62,12 +62,12 @@ void WebSocketClient::disconnect()
 	}
 }
 
-void WebSocketClient::ping()
+void WebSocketClient::ping( const string& msg )
 {
-	websocketpp::lib::error_code err;
-	mClient.send( mHandle, 0, 0, websocketpp::frame::opcode::PING, err );
-	if ( err ) {
-		mSignalError( err.message() );
+	try {
+		mClient.get_con_from_hdl( mHandle )->ping( msg );
+	} catch( ... ) {
+		mSignalError( "Ping failed." );
 	}
 }
 

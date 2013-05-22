@@ -8,31 +8,31 @@
 class EchoClientApp : public ci::app::AppBasic 
 {
 public:
-	void				draw();
-	void				keyDown( ci::app::KeyEvent event );
-	void				prepareSettings( ci::app::AppBasic::Settings* settings );
-	void				setup();
-	void				update();
+	void						draw();
+	void						keyDown( ci::app::KeyEvent event );
+	void						prepareSettings( ci::app::AppBasic::Settings* settings );
+	void						setup();
+	void						update();
 private:
-	void				connect();
-	void				disconnect();
-	WebSocketClient		mClient;
-	void				onConnect();
-	void				onDisconnect();
-	void				onError( std::string msg );
-	void				onInterrupt();
-	void				onPing();
-	void				onRead( std::string msg );
-	void				write();
+	void						connect();
+	void						disconnect();
+	WebSocketClient				mClient;
+	void						onConnect();
+	void						onDisconnect();
+	void						onError( std::string msg );
+	void						onInterrupt();
+	void						onPing();
+	void						onRead( std::string msg );
+	void						write();
 
-	ci::Font			mFont;
-	std::string			mMessage;
-	bool				mPing;
-	double				mPingTime;
-	ci::Vec2f			mSize;
-	std::string			mText;
-	std::string			mTextPrev;
-	ci::gl::Texture		mTexture;
+	ci::Font					mFont;
+	std::string					mMessage;
+	bool						mPing;
+	double						mPingTime;
+	ci::Vec2f					mSize;
+	std::string					mText;
+	std::string					mTextPrev;
+	ci::gl::Texture				mTexture;
 
 	float						mFrameRate;
 	bool						mFullScreen;
@@ -159,7 +159,7 @@ void EchoClientApp::update()
 
 	double e = getElapsedSeconds();
 	if ( mPing && e - mPingTime > 3.0 ) {
-		mClient.ping(); // TODO ping is always returning error -- fix
+		mClient.ping();
 		mPingTime = e;
 	}
 
