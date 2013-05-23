@@ -4,12 +4,10 @@ Cinder implementation of WebSocketPP.
 https://github.com/zaphoyd/websocketpp
 
 This is based on the "WebSocket++ 0.3.x" branch (ie, "experimental").
-This original source has been slightly modified to deal with namespace
-conflicts.
 
 -----------------------------------------
 
-Version 0.0.0
+Version 0.0.1
 
 -----------------------------------------
 

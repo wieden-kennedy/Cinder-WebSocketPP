@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -12,7 +12,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{74202EDD-91D2-4D2A-B0B6-355CEB16E6BE}</ProjectGuid>
-    <RootNamespace>EchoClientApp</RootNamespace>
+    <RootNamespace>ClientApp</RootNamespace>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -103,13 +103,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\WebSocketClient.cpp" />
+    <ClCompile Include="..\..\..\src\WebSocketConnection.cpp" />
+    <ClCompile Include="..\..\..\src\WebSocketServer.cpp" />
     <ClCompile Include="..\..\..\src\websocketpp\md5\md5.c" />
     <ClCompile Include="..\..\..\src\websocketpp\sha1\sha.cpp" />
     <ClCompile Include="..\..\..\src\websocketpp\sha1\sha1.cpp" />
-    <ClCompile Include="..\src\EchoClientApp.cpp" />
+    <ClCompile Include="..\src\ClientApp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\WebSocketClient.h" />
+    <ClInclude Include="..\..\..\src\WebSocketConnection.h" />
+    <ClInclude Include="..\..\..\src\WebSocketServer.h" />
     <ClInclude Include="..\..\..\src\websocketpp\base64\base64.hpp" />
     <ClInclude Include="..\..\..\src\websocketpp\client.hpp" />
     <ClInclude Include="..\..\..\src\websocketpp\close.hpp" />
