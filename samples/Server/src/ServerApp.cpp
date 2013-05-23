@@ -57,7 +57,6 @@ public:
 	void						setup();
 	void						update();
 private:
-	void						listen();
 	WebSocketServer				mServer;
 	void						onConnect();
 	void						onDisconnect();
@@ -86,11 +85,6 @@ private:
 using namespace ci;
 using namespace ci::app;
 using namespace std;
-
-void ServerApp::listen()
-{
-	mServer.listen( 9002 );
-}
 
 void ServerApp::draw()
 {
@@ -178,16 +172,14 @@ void ServerApp::setup()
 	mServer.addPingCallback( &ServerApp::onPing, this );
 	mServer.addReadCallback( &ServerApp::onRead, this );
 
-	mParams = params::InterfaceGl::create( "SERVER", Vec2i( 200, 200 ) );
+	mParams = params::InterfaceGl::create( "SERVER", Vec2i( 200, 100 ) );
 	mParams->addParam( "Frame rate", &mFrameRate, "", true );
 	mParams->addParam( "Fullscreen", &mFullScreen, "key=f" );
 	mParams->addParam( "Message", &mMessage );
-	mParams->addButton( "Cancel", bind( &WebSocketServer::cancel, &mServer ), "key=c" );
-	mParams->addButton( "Listen", bind( &ServerApp::listen, this ), "key=l" );
 	mParams->addButton( "Write", bind( &ServerApp::write, this ), "key=w" );
 	mParams->addButton( "Quit", bind( &ServerApp::quit, this ), "key=q" );
 
-	listen();
+	mServer.listen( 9002 );
 }
 
 void ServerApp::update()

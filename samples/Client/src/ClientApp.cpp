@@ -191,7 +191,7 @@ void ClientApp::setup()
 	mPing		= false;
 	mPingTime	= getElapsedSeconds();
 
-	mParams = params::InterfaceGl::create( "CLIENT", Vec2i( 200, 200 ) );
+	mParams = params::InterfaceGl::create( "CLIENT", Vec2i( 200, 160 ) );
 	mParams->addParam( "Frame rate", &mFrameRate, "", true );
 	mParams->addParam( "Fullscreen", &mFullScreen, "key=f" );
 	mParams->addParam( "Ping enabled", &mPing, "key=p" );
