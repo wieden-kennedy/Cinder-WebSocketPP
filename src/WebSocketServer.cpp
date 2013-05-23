@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Ban the Rewind
+ * Copyright (c) 2013, Ban the Rewind, Wieden+Kennedy
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or
