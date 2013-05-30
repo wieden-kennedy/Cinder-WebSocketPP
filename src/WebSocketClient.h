@@ -51,9 +51,7 @@ public:
 	void	ping( const std::string& msg = "" );
 	void	poll();
 	void	write( const std::string& msg );
-	
-	Client&	getClient();
-private:
+protected:
 	typedef websocketpp::client<websocketpp::config::asio_client>	Client;
 	typedef websocketpp::config::asio_client::message_type::ptr		MessageRef;
 	

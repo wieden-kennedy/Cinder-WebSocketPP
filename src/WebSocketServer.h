@@ -42,7 +42,7 @@
 
 class WebSocketServer : public WebSocketConnection
 {
-public:
+public:	
 	WebSocketServer();
 	~WebSocketServer();
 	
