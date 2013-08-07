@@ -2,13 +2,13 @@
 <cinder>
 <block
 	name="Cinder-WebSocketPP"
-	id="com.bantherewind.websocketpp"
+	id="com.wk.websocketpp"
 	author="Stephen Schieberl"
 	license="BSD"
 	summary="A wrapper for the library WebSocketPP"
 	version="0.3.x"
 	library="https://github.com/zaphoyd/websocketpp"
-	url="https://github.com/BanTheRewind/Cinder-WebSocketPP"
+	url="https://github.com/wieden-kennedy/Cinder-WebSocketPP"
 	>
 	<supports os="macosx" />
 	<supports os="msw" />
