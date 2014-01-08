@@ -1,12 +1,12 @@
-/* 
+/*
     ******
-    base64.hpp is a repackaging of the base64.cpp and base64.h files into a 
-    single headersuitable for use as a header only library. This conversion was 
+    base64.hpp is a repackaging of the base64.cpp and base64.h files into a
+    single header suitable for use as a header only library. This conversion was
     done by Peter Thorson (webmaster@zaphoyd.com) in 2012. All modifications to
-    the code are redistributed under the same license as the original, which is 
+    the code are redistributed under the same license as the original, which is
     listed below.
     ******
-   
+
    base64.cpp and base64.h
 
    Copyright (C) 2004-2008 René Nyffenegger
@@ -38,7 +38,9 @@
 
 #include <string>
 
-static const std::string base64_chars = 
+namespace websocketpp {
+
+static std::string const base64_chars =
              "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
              "abcdefghijklmnopqrstuvwxyz"
              "0123456789+/";
@@ -50,7 +52,7 @@ static inline bool is_base64(unsigned char c) {
            (c >= 97 && c <= 122)); // a-z
 }
 
-inline std::string base64_encode(unsigned char const* bytes_to_encode, unsigned 
+inline std::string base64_encode(unsigned char const * bytes_to_encode, unsigned
     int in_len)
 {
     std::string ret;
@@ -63,9 +65,9 @@ inline std::string base64_encode(unsigned char const* bytes_to_encode, unsigned
         char_array_3[i++] = *(bytes_to_encode++);
         if (i == 3) {
             char_array_4[0] = (char_array_3[0] & 0xfc) >> 2;
-            char_array_4[1] = ((char_array_3[0] & 0x03) << 4) + 
+            char_array_4[1] = ((char_array_3[0] & 0x03) << 4) +
                               ((char_array_3[1] & 0xf0) >> 4);
-            char_array_4[2] = ((char_array_3[1] & 0x0f) << 2) + 
+            char_array_4[2] = ((char_array_3[1] & 0x0f) << 2) +
                               ((char_array_3[2] & 0xc0) >> 6);
             char_array_4[3] = char_array_3[2] & 0x3f;
 
@@ -82,9 +84,9 @@ inline std::string base64_encode(unsigned char const* bytes_to_encode, unsigned
         }
 
         char_array_4[0] = (char_array_3[0] & 0xfc) >> 2;
-        char_array_4[1] = ((char_array_3[0] & 0x03) << 4) + 
+        char_array_4[1] = ((char_array_3[0] & 0x03) << 4) +
                           ((char_array_3[1] & 0xf0) >> 4);
-        char_array_4[2] = ((char_array_3[1] & 0x0f) << 2) + 
+        char_array_4[2] = ((char_array_3[1] & 0x0f) << 2) +
                           ((char_array_3[2] & 0xc0) >> 6);
         char_array_4[3] = char_array_3[2] & 0x3f;
 
@@ -100,11 +102,11 @@ inline std::string base64_encode(unsigned char const* bytes_to_encode, unsigned
   return ret;
 }
 
-inline std::string base64_encode(const std::string & data) {
+inline std::string base64_encode(std::string const & data) {
     return base64_encode(reinterpret_cast<const unsigned char *>(data.data()),data.size());
 }
 
-inline std::string base64_decode(std::string const& encoded_string) {
+inline std::string base64_decode(std::string const & encoded_string) {
     size_t in_len = encoded_string.size();
     int i = 0;
     int j = 0;
@@ -148,5 +150,7 @@ inline std::string base64_decode(std::string const& encoded_string) {
 
     return ret;
 }
+
+} // namespace websocketpp
 
 #endif // _BASE64_HPP_

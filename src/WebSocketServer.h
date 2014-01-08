@@ -50,6 +50,7 @@ public:
 	void	listen( uint16_t port = 80 );
 	void	ping( const std::string& msg = "" );
 	void	poll();
+	void	run();
 	void	write( const std::string& msg );
 private:
 	typedef websocketpp::server<websocketpp::config::asio>	Server;
