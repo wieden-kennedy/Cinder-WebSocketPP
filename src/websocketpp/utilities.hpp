@@ -73,29 +73,20 @@ private:
  * http://stackoverflow.com/questions/3152241/case-insensitive-stdstring-find
  */
 struct ci_less : std::binary_function<std::string, std::string, bool> {
-    // case-independent (ci) compare_less binary function
-    struct nocase_compare
-      : public std::binary_function<unsigned char,unsigned char,bool>
-    {
-		nocase_compare(std::locale const & loc ) : m_loc( loc ) {}
-
-        bool operator() (unsigned char const & c1, unsigned char const & c2) const {
-            return std::tolower (c1, m_loc) < std::tolower (c2, m_loc);
-        }
-	private:
-		std::locale m_loc;
-    };
-
-	ci_less(std::locale const & loc = std::locale() ) : m_loc( loc ) {}
-
-    bool operator() (std::string const & s1, std::string const & s2) const {
-        return std::lexicographical_compare
-            (s1.begin (), s1.end (),   // source range
-            s2.begin (), s2.end (),   // dest range
-            nocase_compare ( m_loc ));  // comparison
-    }
-private:
-	std::locale m_loc;
+	// case-independent (ci) compare_less binary function
+	struct nocase_compare
+	: public std::binary_function<unsigned char,unsigned char,bool>
+	{
+		bool operator() (unsigned char const & c1, unsigned char const & c2) const {
+			return tolower (c1) < tolower (c2);
+		}
+	};
+	bool operator() (std::string const & s1, std::string const & s2) const {
+		return std::lexicographical_compare
+		(s1.begin (), s1.end (),   // source range
+		 s2.begin (), s2.end (),   // dest range
+		 nocase_compare ());  // comparison
+	}
 };
 
 /// Find substring (case insensitive)
