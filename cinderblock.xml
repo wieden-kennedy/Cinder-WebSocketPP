@@ -47,8 +47,10 @@
 	</platform>
 	<platform os="msw">
 		<libraryPath>lib/msw</libraryPath>
-		<staticLibrary>lib/msw/libboost_random-vc110-mt-s-1_53.lib</staticLibrary>
-		<staticLibrary>lib/msw/libboost_random-vc110-mt-sgd-1_53.lib</staticLibrary>
+		<staticLibrary>lib/msw/libboost_random-vc120-mt-s-1_55.lib</staticLibrary>
+		<staticLibrary>lib/msw/libboost_random-vc120-mt-sgd-1_55.lib</staticLibrary>
+		<staticLibrary>lib/msw/libboost_regex-vc120-mt-s-1_55.lib</staticLibrary>
+		<staticLibrary>lib/msw/libboost_regex-vc120-mt-sgd-1_55.lib</staticLibrary>
 	</platform>
 </block>
 </cinder>
