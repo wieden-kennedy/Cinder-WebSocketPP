@@ -70,7 +70,8 @@ WebSocketServer::~WebSocketServer()
 void WebSocketServer::cancel()
 {
 	try {
-		mServer.cancel();
+		//mServer.cancel();
+		mServer.stop_listening();
 	} catch ( const std::exception& ex ) {
 		mSignalError( ex.what() );
     } catch ( websocketpp::lib::error_code err ) {
@@ -106,6 +107,11 @@ void WebSocketServer::ping( const string& msg )
 void WebSocketServer::poll()
 {
 	mServer.poll();
+}
+
+void WebSocketServer::run()
+{
+	mServer.run();
 }
 
 void WebSocketServer::write( const std::string& msg )
