@@ -37,10 +37,6 @@
 
 using namespace std;
 
-using websocketpp::lib::placeholders::_1;
-using websocketpp::lib::placeholders::_2;
-using websocketpp::lib::bind;
-
 WebSocketClient::WebSocketClient()
 {
 	mClient.clear_access_channels( websocketpp::log::alevel::all );
@@ -48,12 +44,12 @@ WebSocketClient::WebSocketClient()
 	
 	mClient.init_asio();
 
-	mClient.set_close_handler( websocketpp::lib::bind( &WebSocketClient::onDisconnect, this, &mClient, ::_1 ) );
-	mClient.set_interrupt_handler( websocketpp::lib::bind( &WebSocketClient::onInterrupt, this, &mClient, ::_1 ) );
-	mClient.set_open_handler( websocketpp::lib::bind( &WebSocketClient::onConnect, this, &mClient, ::_1 ) );
-	mClient.set_pong_handler( websocketpp::lib::bind( &WebSocketClient::onPing, this, &mClient, ::_1, ::_2 ) );
-	mClient.set_message_handler( websocketpp::lib::bind( &WebSocketClient::onRead, this, &mClient, ::_1, ::_2 ) );
-	mClient.set_fail_handler( websocketpp::lib::bind( &WebSocketClient::onFail, this, &mClient, ::_1 ) );
+	mClient.set_close_handler( websocketpp::lib::bind( &WebSocketClient::onDisconnect, this, &mClient, std::placeholders::_1 ) );
+	mClient.set_interrupt_handler( websocketpp::lib::bind( &WebSocketClient::onInterrupt, this, &mClient, std::placeholders::_1 ) );
+	mClient.set_open_handler( websocketpp::lib::bind( &WebSocketClient::onConnect, this, &mClient, std::placeholders::_1 ) );
+	mClient.set_pong_handler( websocketpp::lib::bind( &WebSocketClient::onPing, this, &mClient, std::placeholders::_1, std::placeholders::_2 ) );
+	mClient.set_message_handler( websocketpp::lib::bind( &WebSocketClient::onRead, this, &mClient, std::placeholders::_1, std::placeholders::_2 ) );
+	mClient.set_fail_handler( websocketpp::lib::bind( &WebSocketClient::onFail, this, &mClient, std::placeholders::_1 ) );
 }
 
 WebSocketClient::~WebSocketClient()

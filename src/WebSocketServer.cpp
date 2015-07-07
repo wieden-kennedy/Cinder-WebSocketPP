@@ -40,10 +40,6 @@
 using namespace ci;
 using namespace std;
 
-using websocketpp::lib::placeholders::_1;
-using websocketpp::lib::placeholders::_2;
-using websocketpp::lib::bind;
-
 WebSocketServer::WebSocketServer()
 {
 	mServer.set_access_channels(websocketpp::log::alevel::all);
@@ -51,12 +47,12 @@ WebSocketServer::WebSocketServer()
 	
 	mServer.init_asio();
 	
-	mServer.set_close_handler( websocketpp::lib::bind( &WebSocketServer::onDisconnect, this, &mServer, ::_1 ) );
-	mServer.set_interrupt_handler( websocketpp::lib::bind( &WebSocketServer::onInterrupt, this, &mServer, ::_1 ) );
-	mServer.set_open_handler( websocketpp::lib::bind( &WebSocketServer::onConnect, this, &mServer, ::_1 ) );
-	mServer.set_ping_handler( websocketpp::lib::bind( &WebSocketServer::onPing, this, &mServer, ::_1, ::_2 ) );
-	mServer.set_message_handler( websocketpp::lib::bind( &WebSocketServer::onRead, this, &mServer, ::_1, ::_2 ) );
-	mServer.set_fail_handler( websocketpp::lib::bind( &WebSocketServer::onFail, this, &mServer, ::_1 ) );
+	mServer.set_close_handler( websocketpp::lib::bind( &WebSocketServer::onDisconnect, this, &mServer, std::placeholders::_1 ) );
+	mServer.set_interrupt_handler( websocketpp::lib::bind( &WebSocketServer::onInterrupt, this, &mServer, std::placeholders::_1 ) );
+	mServer.set_open_handler( websocketpp::lib::bind( &WebSocketServer::onConnect, this, &mServer, std::placeholders::_1 ) );
+	mServer.set_ping_handler( websocketpp::lib::bind( &WebSocketServer::onPing, this, &mServer, std::placeholders::_1, std::placeholders::_2 ) );
+	mServer.set_message_handler( websocketpp::lib::bind( &WebSocketServer::onRead, this, &mServer, std::placeholders::_1, std::placeholders::_2 ) );
+	mServer.set_fail_handler( websocketpp::lib::bind( &WebSocketServer::onFail, this, &mServer, std::placeholders::_1 ) );
 }
 
 WebSocketServer::~WebSocketServer()
