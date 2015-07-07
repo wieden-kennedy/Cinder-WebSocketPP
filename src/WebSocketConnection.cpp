@@ -70,8 +70,6 @@
 *
 */
 
-#pragma once
-
 #include "cinder/signals.h"
 #include "websocketpp/common/connection_hdl.hpp"
 

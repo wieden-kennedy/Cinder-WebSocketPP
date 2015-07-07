@@ -112,7 +112,7 @@ ServerApp::ServerApp()
 	} );
 	mServer.connectPingEventHandler( [ & ]( string msg )
 	{
-		mText = "Ponged";
+		mText = "Pinged";
 		if ( msg.empty() ) {
 			mText += ": " + msg;
 		}
@@ -129,8 +129,8 @@ ServerApp::ServerApp()
 	mParams->addParam( "Frame rate",	&mFrameRate, "", true );
 	mParams->addParam( "Fullscreen",	&mFullScreen ).key( "f" );
 	mParams->addParam( "Message",		&mMessage );
-	mParams->addButton( "Write",		[ & ]() { write(); },		"key=w" );
-	mParams->addButton( "Quit",			[ & ]() { quit(); },		"key=q" );
+	mParams->addButton( "Write",		[ & ]() { write(); },	"key=w" );
+	mParams->addButton( "Quit",			[ & ]() { quit(); },	"key=q" );
 
 	mServer.listen( 9002 );
 }
