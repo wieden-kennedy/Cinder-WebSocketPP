@@ -119,7 +119,7 @@ ServerApp::ServerApp()
 	} );
 	mServer.connectReadEventHandler( [ & ]( string msg )
 	{
-		mText = "Read";
+		mText = "Read from " + mServer.getServer().get_connection()->get_remote_endpoint();
 		if ( !msg.empty() ) {
 			mText += ": " + msg;
 		}
