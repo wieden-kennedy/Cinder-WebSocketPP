@@ -9,7 +9,7 @@
 	<key>CFBundleIconFile</key>
 	<string>CinderApp</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.bantherewind.ClientApp</string>
+	<string>com.wk.websocketpp.ClientApp</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
