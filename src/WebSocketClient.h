@@ -42,25 +42,28 @@
 
 class WebSocketClient : public WebSocketConnection
 {
+protected:
+	typedef websocketpp::client<websocketpp::config::asio_client>	Client;
+	typedef websocketpp::config::asio_client::message_type::ptr		MessageRef;
 public:
 	WebSocketClient();
 	~WebSocketClient();
 
-	void	connect( const std::string& uri );
-	void	disconnect();
-	void	ping( const std::string& msg = "" );
-	void	poll();
-	void	write( const std::string& msg );
+	void			connect( const std::string& uri );
+	void			disconnect();
+	void			ping( const std::string& msg = "" );
+	void			poll();
+	void			write( const std::string& msg );
+	
+	Client&			getClient();
+	const Client&	getClient() const;
 protected:
-	typedef websocketpp::client<websocketpp::config::asio_client>	Client;
-	typedef websocketpp::config::asio_client::message_type::ptr		MessageRef;
+	Client			mClient;
 	
-	Client	mClient;
-	
-	void	onConnect( Client* client, websocketpp::connection_hdl handle );
-	void	onDisconnect( Client* client, websocketpp::connection_hdl handle );
-	void	onFail( Client* client, websocketpp::connection_hdl handle );
-	void	onInterrupt( Client* client, websocketpp::connection_hdl handle );
-	void	onPing( Client* client, websocketpp::connection_hdl handle, std::string msg );
-	void	onRead( Client* client, websocketpp::connection_hdl handle, MessageRef msg );
+	void			onConnect( Client* client, websocketpp::connection_hdl handle );
+	void			onDisconnect( Client* client, websocketpp::connection_hdl handle );
+	void			onFail( Client* client, websocketpp::connection_hdl handle );
+	void			onInterrupt( Client* client, websocketpp::connection_hdl handle );
+	void			onPing( Client* client, websocketpp::connection_hdl handle, std::string msg );
+	void			onRead( Client* client, websocketpp::connection_hdl handle, MessageRef msg );
 };

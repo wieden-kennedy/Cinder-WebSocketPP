@@ -148,6 +148,16 @@ void WebSocketServer::write( const std::string& msg )
 	}
 }
 
+WebSocketServer::Server& WebSocketServer::getServer()
+{
+	return mServer;
+}
+
+const WebSocketServer::Server& WebSocketServer::getServer() const
+{
+	return mServer;
+}
+
 void WebSocketServer::onConnect( Server* server, websocketpp::connection_hdl handle )
 {
 	mHandle = handle;

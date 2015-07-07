@@ -42,26 +42,29 @@
 
 class WebSocketServer : public WebSocketConnection
 {
-public:	
+protected:
+	typedef websocketpp::server<websocketpp::config::asio>	Server;
+	typedef Server::message_ptr								MessageRef;
+public:
 	WebSocketServer();
 	~WebSocketServer();
 	
-	void	cancel();
-	void	listen( uint16_t port = 80 );
-	void	ping( const std::string& msg = "" );
-	void	poll();
-	void	run();
-	void	write( const std::string& msg );
-private:
-	typedef websocketpp::server<websocketpp::config::asio>	Server;
-	typedef Server::message_ptr								MessageRef;
+	void			cancel();
+	void			listen( uint16_t port = 80 );
+	void			ping( const std::string& msg = "" );
+	void			poll();
+	void			run();
+	void			write( const std::string& msg );
 	
-	Server	mServer;
+	Server&			getServer();
+	const Server&	getServer() const;
+protected:
+	Server			mServer;
 	
-	void	onConnect( Server* server, websocketpp::connection_hdl handle );
-	void	onDisconnect( Server* server, websocketpp::connection_hdl handle );
-	void	onFail( Server* server, websocketpp::connection_hdl handle );
-	void	onInterrupt( Server* server, websocketpp::connection_hdl handle );
-	bool	onPing( Server* server, websocketpp::connection_hdl handle, std::string msg );
-	void	onRead( Server* server, websocketpp::connection_hdl handle, MessageRef msg );
+	void			onConnect( Server* server, websocketpp::connection_hdl handle );
+	void			onDisconnect( Server* server, websocketpp::connection_hdl handle );
+	void			onFail( Server* server, websocketpp::connection_hdl handle );
+	void			onInterrupt( Server* server, websocketpp::connection_hdl handle );
+	bool			onPing( Server* server, websocketpp::connection_hdl handle, std::string msg );
+	void			onRead( Server* server, websocketpp::connection_hdl handle, MessageRef msg );
 };

@@ -145,6 +145,16 @@ void WebSocketClient::write( const std::string& msg )
 	}
 }
 
+WebSocketClient::Client& WebSocketClient::getClient()
+{
+	return mClient;
+}
+
+const WebSocketClient::Client& WebSocketClient::getClient() const
+{
+	return mClient;
+}
+
 void WebSocketClient::onConnect( Client* client, websocketpp::connection_hdl handle ) 
 {
 	mHandle = handle;
