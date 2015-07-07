@@ -148,7 +148,7 @@ void WebSocketServer::write( const std::string& msg )
 	}
 }
 
-void WebSocketServer::onConnect( Server* client, websocketpp::connection_hdl handle )
+void WebSocketServer::onConnect( Server* server, websocketpp::connection_hdl handle )
 {
 	mHandle = handle;
 	if ( mConnectEventHandler != nullptr ) {
@@ -156,14 +156,14 @@ void WebSocketServer::onConnect( Server* client, websocketpp::connection_hdl han
 	}
 }
 
-void WebSocketServer::onDisconnect( Server* client, websocketpp::connection_hdl handle )
+void WebSocketServer::onDisconnect( Server* server, websocketpp::connection_hdl handle )
 {
 	if ( mDisconnectEventHandler != nullptr ) {
 		mDisconnectEventHandler();
 	}
 }
 
-void WebSocketServer::onFail( Server* client, websocketpp::connection_hdl handle )
+void WebSocketServer::onFail( Server* server, websocketpp::connection_hdl handle )
 {
 	mHandle = handle;
 	if ( mErrorEventHandler != nullptr ) {
@@ -171,7 +171,7 @@ void WebSocketServer::onFail( Server* client, websocketpp::connection_hdl handle
 	}
 }
 
-void WebSocketServer::onInterrupt( Server* client, websocketpp::connection_hdl handle )
+void WebSocketServer::onInterrupt( Server* server, websocketpp::connection_hdl handle )
 {
 	mHandle = handle;
 	if ( mInterruptEventHandler != nullptr ) {
@@ -179,7 +179,7 @@ void WebSocketServer::onInterrupt( Server* client, websocketpp::connection_hdl h
 	}
 }
 
-bool WebSocketServer::onPing( Server* client, websocketpp::connection_hdl handle, string msg )
+bool WebSocketServer::onPing( Server* server, websocketpp::connection_hdl handle, string msg )
 {
 	mHandle = handle;
 	if ( mPingEventHandler != nullptr ) {
@@ -188,7 +188,7 @@ bool WebSocketServer::onPing( Server* client, websocketpp::connection_hdl handle
 	return true;
 }
 
-void WebSocketServer::onRead( Server* client, websocketpp::connection_hdl handle, MessageRef msg )
+void WebSocketServer::onRead( Server* server, websocketpp::connection_hdl handle, MessageRef msg )
 {
 	mHandle = handle;
 	if ( mReadEventHandler != nullptr ) {
