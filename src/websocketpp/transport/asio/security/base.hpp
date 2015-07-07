@@ -34,8 +34,6 @@
 #include <websocketpp/common/cpp11.hpp>
 #include <websocketpp/common/connection_hdl.hpp>
 
-#include <boost/asio.hpp>
-
 #include <string>
 
 // Interface that sockets/security policies must implement
@@ -56,6 +54,7 @@
 
 // Connection
 // TODO
+// set_hostname(std::string hostname)
 // pre_init(init_handler);
 // post_init(init_handler);
 
@@ -98,13 +97,16 @@ namespace error {
 
         /// TLS Handshake Failed
         tls_handshake_failed,
+        
+        /// Failed to set TLS SNI hostname
+        tls_failed_sni_hostname
     };
 } // namespace error
 
 /// Error category related to asio transport socket policies
 class socket_category : public lib::error_category {
 public:
-    const char *name() const _WEBSOCKETPP_NOEXCEPT_TOKEN_ {
+    char const * name() const _WEBSOCKETPP_NOEXCEPT_TOKEN_ {
         return "websocketpp.transport.asio.socket";
     }
 
@@ -126,13 +128,15 @@ public:
                 return "Required tls_init handler not present.";
             case error::tls_handshake_failed:
                 return "TLS handshake failed";
+            case error::tls_failed_sni_hostname:
+                return "Failed to set TLS SNI hostname";
             default:
                 return "Unknown";
         }
     }
 };
 
-inline const lib::error_category& get_socket_category() {
+inline lib::error_category const & get_socket_category() {
     static socket_category instance;
     return instance;
 }

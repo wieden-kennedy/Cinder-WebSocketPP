@@ -6,7 +6,7 @@
 	author="Stephen Schieberl"
 	license="BSD"
 	summary="A wrapper for the library WebSocketPP"
-	version="0.4.0"
+	version="0.7.0"
 	library="https://github.com/zaphoyd/websocketpp"
 	url="https://github.com/wieden-kennedy/Cinder-WebSocketPP"
 	>
@@ -19,8 +19,6 @@
 	<includePath system="true">src</includePath>
 	<platform os="msw">
 		<libraryPath>lib/msw</libraryPath>
-		<staticLibrary>lib/msw/libboost_random-vc110-mt-s-1_53.lib</staticLibrary>
-		<staticLibrary>lib/msw/libboost_random-vc110-mt-sgd-1_53.lib</staticLibrary>
 	</platform>
 </block>
 </cinder>

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Wieden+Kennedy
+ * Copyright (c) 2015, Wieden+Kennedy
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or
@@ -33,8 +33,8 @@
  * 
  */
 
-#include "cinder/app/AppBasic.h"
-#include "cinder/gl/Texture.h"
+#include "cinder/app/App.h"
+#include "cinder/gl/gl.h"
 #include "cinder/params/Params.h"
 #include "cinder/Text.h"
 
@@ -48,30 +48,23 @@
  * communicate with clients.
  */
 
-class ServerApp : public ci::app::AppBasic 
+class ServerApp : public ci::app::App
 {
 public:
-	void						draw();
-	void						keyDown( ci::app::KeyEvent event );
-	void						prepareSettings( ci::app::AppBasic::Settings* settings );
-	void						setup();
-	void						update();
+	ServerApp();
+
+	void						draw() override;
+	void						update() override;
 private:
 	WebSocketServer				mServer;
-	void						onConnect();
-	void						onDisconnect();
-	void						onError( std::string err );
-	void						onInterrupt();
-	void						onPing( std::string msg );
-	void						onRead( std::string msg );
 	void						write();
 
 	ci::Font					mFont;
 	std::string					mMessage;
-	ci::Vec2f					mSize;
+	ci::vec2					mSize;
 	std::string					mText;
 	std::string					mTextPrev;
-	ci::gl::Texture				mTexture;
+	ci::gl::Texture2dRef		mTexture;
 
 	float						mFrameRate;
 	bool						mFullScreen;
@@ -79,16 +72,73 @@ private:
 };
 
 #include "boost/algorithm/string.hpp"
-#include "cinder/Json.h"
+#include "cinder/app/RendererGl.h"
 #include "cinder/Utilities.h"
 
 using namespace ci;
 using namespace ci::app;
 using namespace std;
 
+ServerApp::ServerApp()
+{
+	mFrameRate	= 0.0f;
+	mFullScreen	= false;
+	mMessage	= "Hello, client!";
+	
+	mFont		= Font( "Georgia", 80.0f );
+	mSize		= vec2( getWindowSize() );
+	mText		= "Listening...";
+	mTextPrev	= "";
+
+	// Connect event handlers
+	mServer.connectConnectEventHandler( [ & ]()
+	{
+		mText = "Connected";
+	} );
+	mServer.connectDisconnectEventHandler( [ & ]()
+	{
+		mText = "Disconnected";
+	} );
+	mServer.connectErrorEventHandler( [ & ]( string err )
+	{
+		mText = "Error";
+		if ( !err.empty() ) {
+			mText += ": " + err;
+		}
+	} );
+	mServer.connectInterruptEventHandler( [ & ]()
+	{
+		mText = "Interrupted";
+	} );
+	mServer.connectPingEventHandler( [ & ]( string msg )
+	{
+		mText = "Ponged";
+		if ( msg.empty() ) {
+			mText += ": " + msg;
+		}
+	} );
+	mServer.connectReadEventHandler( [ & ]( string msg )
+	{
+		mText = "Read";
+		if ( !msg.empty() ) {
+			mText += ": " + msg;
+		}
+	} );
+
+	mParams = params::InterfaceGl::create( "SERVER", ivec2( 200, 100 ) );
+	mParams->addParam( "Frame rate",	&mFrameRate, "", true );
+	mParams->addParam( "Fullscreen",	&mFullScreen ).key( "f" );
+	mParams->addParam( "Message",		&mMessage );
+	mParams->addButton( "Write",		[ & ]() { write(); },		"key=w" );
+	mParams->addButton( "Quit",			[ & ]() { quit(); },		"key=q" );
+
+	mServer.listen( 9002 );
+}
+
 void ServerApp::draw()
 {
-	gl::setViewport( getWindowBounds() );
+	const gl::ScopedViewport scopedViewport( ivec2( 0 ), getWindowSize() );
+	const gl::ScopedMatrices scopedMatrices;
 	gl::clear();
 	gl::setMatricesWindow( getWindowSize() );
 
@@ -98,88 +148,6 @@ void ServerApp::draw()
 	}
 
 	mParams->draw();
-}
-
-void ServerApp::keyDown( KeyEvent event )
-{
-	if ( event.getCode() == KeyEvent::KEY_q ) {
-		quit();
-	}
-}
-
-void ServerApp::onConnect() 
-{
-	mText = "Connected";
-}
-
-void ServerApp::onDisconnect() 
-{
-	mText = "Disconnected";
-}
-
-void ServerApp::onError( string err ) 
-{
-	mText = "Error";
-	if ( !err.empty() ) {
-		mText += ": " + err;
-	}
-}
-
-void ServerApp::onInterrupt() 
-{
-	mText = "Interrupted";
-}
-
-void ServerApp::onPing( string msg )
-{
-	mText = "Pinged";
-	if ( !msg.empty() ) {
-		mText += ": " + msg;
-	}
-}
-
-void ServerApp::onRead( string msg ) 
-{
-	mText = "Read";
-	if ( !msg.empty() ) {
-		mText += ": " + msg;
-	}
-}
-
-void ServerApp::prepareSettings( Settings* settings )
-{
-	settings->setFrameRate( 60.0f );
-	settings->setResizable( false );
-	settings->setWindowSize( 512, 384 );
-}
-
-void ServerApp::setup()
-{
-	mFrameRate	= 0.0f;
-	mFullScreen	= false;
-	mMessage	= "Hello, client!";
-	
-	gl::enable( GL_TEXTURE_2D );
-	mFont		= Font( "Georgia", 80 );
-	mSize		= Vec2f( getWindowSize() );
-	mText		= "Listening...";
-	mTextPrev	= "";
-
-	mServer.addConnectCallback( &ServerApp::onConnect, this );
-	mServer.addDisconnectCallback( &ServerApp::onDisconnect, this );
-	mServer.addErrorCallback( &ServerApp::onError, this );
-	mServer.addInterruptCallback( &ServerApp::onInterrupt, this );
-	mServer.addPingCallback( &ServerApp::onPing, this );
-	mServer.addReadCallback( &ServerApp::onRead, this );
-
-	mParams = params::InterfaceGl::create( "SERVER", Vec2i( 200, 100 ) );
-	mParams->addParam( "Frame rate", &mFrameRate, "", true );
-	mParams->addParam( "Fullscreen", &mFullScreen, "key=f" );
-	mParams->addParam( "Message", &mMessage );
-	mParams->addButton( "Write", bind( &ServerApp::write, this ), "key=w" );
-	mParams->addButton( "Quit", bind( &ServerApp::quit, this ), "key=q" );
-
-	mServer.listen( 9002 );
 }
 
 void ServerApp::update()
@@ -197,12 +165,16 @@ void ServerApp::update()
 		if ( mText.empty() ) {
 			mTexture.reset();
 		} else {
-			TextBox tbox = TextBox().alignment( TextBox::CENTER ).font( mFont ).size( Vec2i( mSize.x, TextBox::GROW ) ).text( mText );
-			tbox.setColor( ColorAf( 1.0f, 0.8f, 0.75f, 1.0f ) );
-			tbox.setBackgroundColor( ColorAf::black() );
-			tbox.setPremultiplied( false );
-			mSize.y		= tbox.measure().y;
-			mTexture	= gl::Texture( tbox.render() );
+			TextBox tbox = TextBox()
+				.alignment( TextBox::CENTER )
+				.backgroundColor( ColorAf::black() )
+				.color( ColorAf( 1.0f, 0.8f, 0.75f, 1.0f ) )
+				.font( mFont )
+				.premultiplied( false )
+				.size( ivec2( mSize.x, TextBox::GROW ) )
+				.text( mText );
+			mSize.y = tbox.measure().y;
+			mTexture = gl::Texture2d::create( tbox.render() );
 		}
 	}
 }
@@ -212,4 +184,9 @@ void ServerApp::write()
 	mServer.write( mMessage );
 }
 
-CINDER_APP_BASIC( ServerApp, RendererGl )
+CINDER_APP( ServerApp, RendererGl, []( App::Settings* settings )
+{
+	settings->disableFrameRate();
+	settings->setResizable( false );
+	settings->setWindowSize( 512, 384 );
+} )

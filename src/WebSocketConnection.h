@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Wieden+Kennedy
+ * Copyright (c) 2015, Wieden+Kennedy
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or
@@ -35,78 +35,88 @@
 
 #pragma once
 
-#include "boost/signals2.hpp"
+#define _WEBSOCKETPP_CPP11_RANDOM_DEVICE_
+#define _WEBSOCKETPP_CPP11_THREAD_
+#define BOOST_DATE_TIME_NO_LIB
+#define BOOST_REGEX_NO_LIB
+
+#include "websocketpp/common/random.hpp"
+#include "websocketpp/common/thread.hpp"
 #include "websocketpp/common/connection_hdl.hpp"
 
 class WebSocketConnection
 {
 public:
+	WebSocketConnection();
+	~WebSocketConnection();
+
 	virtual void	ping( const std::string& msg ) = 0;
 	virtual void	poll() = 0;
 	virtual void	write( const std::string& msg ) = 0;
 	
 	template<typename T, typename Y>
-	inline uint32_t	addConnectCallback( T callback, Y *callbackObject )
+	inline void		connectConnectEventHandler( T eventHandler, Y* eventHandlerObject )
 	{
-		uint32_t id = mCallbacks.empty() ? 0 : mCallbacks.rbegin()->first + 1;
-		mCallbacks.insert( std::make_pair( id, CallbackRef( new Callback( mSignalConnect.connect( std::bind( callback, callbackObject ) ) ) ) ) );
-		return id;
+		connectConnectEventHandler( std::bind( eventHandler, eventHandlerObject ) );
 	}
-	
+	void			connectConnectEventHandler( const std::function<void()>& eventHandler );
+	void			disconnectConnectEventHandler();
+
 	template<typename T, typename Y>
-	inline uint32_t	addDisconnectCallback( T callback, Y *callbackObject )
+	inline void		connectDisconnectEventHandler( T eventHandler, Y* eventHandlerObject )
 	{
-		uint32_t id = mCallbacks.empty() ? 0 : mCallbacks.rbegin()->first + 1;
-		mCallbacks.insert( std::make_pair( id, CallbackRef( new Callback( mSignalDisconnect.connect( std::bind( callback, callbackObject ) ) ) ) ) );
-		return id;
+		connectDisconnectEventHandler( std::bind( eventHandler, eventHandlerObject ) );
 	}
-	
+	void			connectDisconnectEventHandler( const std::function<void()>& eventHandler );
+	void			disconnectDisconnectEventHandler();
+
 	template<typename T, typename Y>
-	inline uint32_t	addErrorCallback( T callback, Y *callbackObject )
+	inline void		connectErrorEventHandler( T eventHandler, Y* eventHandlerObject )
 	{
-		uint32_t id = mCallbacks.empty() ? 0 : mCallbacks.rbegin()->first + 1;
-		mCallbacks.insert( std::make_pair( id, CallbackRef( new Callback( mSignalError.connect( std::bind( callback, callbackObject, std::placeholders::_1 ) ) ) ) ) );
-		return id;
+		connectErrorEventHandler( std::bind( eventHandler, eventHandlerObject ) );
 	}
-	
+	void			connectErrorEventHandler( const std::function<void( std::string )>& eventHandler );
+	void			disconnectErrorEventHandler();
+
 	template<typename T, typename Y>
-	inline uint32_t	addInterruptCallback( T callback, Y *callbackObject )
+	inline void		connectInterruptEventHandler( T eventHandler, Y* eventHandlerObject )
 	{
-		uint32_t id = mCallbacks.empty() ? 0 : mCallbacks.rbegin()->first + 1;
-		mCallbacks.insert( std::make_pair( id, CallbackRef( new Callback( mSignalInterrupt.connect( std::bind( callback, callbackObject ) ) ) ) ) );
-		return id;
+		connectInterruptEventHandler( std::bind( eventHandler, eventHandlerObject ) );
 	}
-	
+	void			connectInterruptEventHandler( const std::function<void()>& eventHandler );
+	void			disconnectInterruptEventHandler();
+
 	template<typename T, typename Y>
-	inline uint32_t	addPingCallback( T callback, Y *callbackObject )
+	inline void		connectPingEventHandler( T eventHandler, Y* eventHandlerObject )
 	{
-		uint32_t id = mCallbacks.empty() ? 0 : mCallbacks.rbegin()->first + 1;
-		mCallbacks.insert( std::make_pair( id, CallbackRef( new Callback( mSignalPing.connect( std::bind( callback, callbackObject, std::placeholders::_1 ) ) ) ) ) );
-		return id;
+		connectPingEventHandler( std::bind( eventHandler, eventHandlerObject, std::placeholders::_1 ) );
 	}
-	
+	void			connectPingEventHandler( const std::function<void( std::string )>& eventHandler );
+	void			disconnectPingEventHandler();
+
 	template<typename T, typename Y>
-	inline uint32_t	addReadCallback( T callback, Y *callbackObject )
+	inline void		connectReadEventHandler( T eventHandler, Y* eventHandlerObject )
 	{
-		uint32_t id = mCallbacks.empty() ? 0 : mCallbacks.rbegin()->first + 1;
-		mCallbacks.insert( std::make_pair( id, CallbackRef( new Callback( mSignalRead.connect( std::bind( callback, callbackObject, std::placeholders::_1 ) ) ) ) ) );
-		return id;
+		connectReadEventHandler( std::bind( eventHandler, eventHandlerObject, std::placeholders::_1 ) );
 	}
-	
-	void			removeCallback( uint32_t id );
+	void			connectReadEventHandler( const std::function<void( std::string )>& eventHandler );
+	void			disconnectReadEventHandler();
+
+	template<typename T, typename Y>
+	inline void		connectWriteEventHandler( T eventHandler, Y* eventHandlerObject )
+	{
+		connectWriteEventHandler( std::bind( eventHandler, eventHandlerObject ) );
+	}
+	void			connectWriteEventHandler( const std::function<void()>& eventHandler );
+	void			disconnectWriteEventHandler();
 protected:
-	typedef boost::signals2::connection				Callback;
-	typedef std::shared_ptr<Callback>				CallbackRef;
-	typedef std::map<uint32_t, CallbackRef>			CallbackList;
+	websocketpp::connection_hdl			mHandle;
 	
-	websocketpp::connection_hdl						mHandle;
-	
-	CallbackList									mCallbacks;
-	boost::signals2::signal<void ()>				mSignalConnect;
-	boost::signals2::signal<void ()>				mSignalDisconnect;
-	boost::signals2::signal<void ( std::string )>	mSignalError;
-	boost::signals2::signal<void ()>				mSignalInterrupt;
-	boost::signals2::signal<void ( std::string )>	mSignalPing;
-	boost::signals2::signal<void ( std::string )>	mSignalRead;
-	boost::signals2::signal<void ()>				mSignalWrite;
+	std::function<void()>				mConnectEventHandler;
+	std::function<void()>				mDisconnectEventHandler;
+	std::function<void( std::string )>	mErrorEventHandler;
+	std::function<void()>				mInterruptEventHandler;
+	std::function<void( std::string )>	mPingEventHandler;
+	std::function<void( std::string )>	mReadEventHandler;
+	std::function<void()>				mWriteEventHandler;
 };

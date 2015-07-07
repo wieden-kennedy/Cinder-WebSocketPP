@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Wieden+Kennedy
+ * Copyright (c) 2015, Wieden+Kennedy
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or
@@ -70,20 +70,30 @@ void WebSocketClient::connect( const std::string& uri )
 		websocketpp::lib::error_code err;
 		Client::connection_ptr conn = mClient.get_connection( uri, err );
 		if ( err ) {
-			mSignalError( err.message() );
+			if ( mErrorEventHandler != nullptr ) {
+				mErrorEventHandler( err.message() );
+			}
 		} else {
 			if ( conn ) {
 				mClient.connect( conn );
 			} else {
-				mSignalError( "Unable to resolve address." );
+				if ( mErrorEventHandler != nullptr ) {
+					mErrorEventHandler( "Unable to resolve address." );
+				}
 			}
 		}
 	} catch ( const std::exception& ex ) {
-		mSignalError( ex.what() );
+		if ( mErrorEventHandler != nullptr ) {
+			mErrorEventHandler( ex.what() );
+		}
     } catch ( websocketpp::lib::error_code err ) {
-        mSignalError( err.message() );
+		if ( mErrorEventHandler != nullptr ) {
+			mErrorEventHandler( err.message() );
+		}
     } catch ( ... ) {
-        mSignalError( "An unknown exception occurred." );
+		if ( mErrorEventHandler != nullptr ) {
+			mErrorEventHandler( "An unknown exception occurred." );
+		}
     }
 }
 
@@ -92,7 +102,9 @@ void WebSocketClient::disconnect()
 	websocketpp::lib::error_code err;
 	mClient.close( mHandle, websocketpp::close::status::going_away, "", err );
 	if ( err ) {
-		mSignalError( err.message() );
+		if ( mErrorEventHandler != nullptr ) {
+			mErrorEventHandler( err.message() );
+		}
 	}
 }
 
@@ -101,7 +113,9 @@ void WebSocketClient::ping( const string& msg )
 	try {
 		mClient.get_con_from_hdl( mHandle )->ping( msg );
 	} catch( ... ) {
-		mSignalError( "Ping failed." );
+		if ( mErrorEventHandler != nullptr ) {
+			mErrorEventHandler( "Ping failed." );
+		}
 	}
 }
 
@@ -113,14 +127,20 @@ void WebSocketClient::poll()
 void WebSocketClient::write( const std::string& msg )
 {
 	if ( msg.empty() ) {
-		mSignalError( "Cannot send empty message." );
+		if ( mErrorEventHandler != nullptr ) {
+			mErrorEventHandler( "Cannot send empty message." );
+		}
 	} else {
 		websocketpp::lib::error_code err;
 		mClient.send( mHandle, msg, websocketpp::frame::opcode::TEXT, err );
 		if ( err ) {
-			mSignalError( err.message() );
+			if ( mErrorEventHandler != nullptr ) {
+				mErrorEventHandler( err.message() );
+			}
 		} else {
-			mSignalWrite();
+			if ( mWriteEventHandler != nullptr ) {
+				mWriteEventHandler();
+			}
 		}
 	}
 }
@@ -128,34 +148,46 @@ void WebSocketClient::write( const std::string& msg )
 void WebSocketClient::onConnect( Client* client, websocketpp::connection_hdl handle ) 
 {
 	mHandle = handle;
-	mSignalConnect();
+	if ( mConnectEventHandler != nullptr ) {
+		mConnectEventHandler();
+	}
 }
 
 void WebSocketClient::onDisconnect( Client* client, websocketpp::connection_hdl handle ) 
 {
-	mSignalDisconnect();
+	if ( mDisconnectEventHandler != nullptr ) {
+		mDisconnectEventHandler();
+	}
 }
 
 void WebSocketClient::onFail( Client* client, websocketpp::connection_hdl handle ) 
 {
 	mHandle = handle;
-	mSignalError( "Transfer failed." );
+	if ( mErrorEventHandler != nullptr ) {
+		mErrorEventHandler( "Transfer failed." );
+	}
 }
 
 void WebSocketClient::onInterrupt( Client* client, websocketpp::connection_hdl handle ) 
 {
 	mHandle = handle;
-	mSignalInterrupt();
+	if ( mInterruptEventHandler != nullptr ) {
+		mInterruptEventHandler();
+	}
 }
 
 void WebSocketClient::onPing( Client* client, websocketpp::connection_hdl handle, string msg )
 {
 	mHandle = handle;
-	mSignalPing( msg );
+	if ( mPingEventHandler != nullptr ) {
+		mPingEventHandler( msg );
+	}
 }
 
 void WebSocketClient::onRead( Client* client, websocketpp::connection_hdl handle, MessageRef msg ) 
 {
 	mHandle = handle;
-	mSignalRead( msg->get_payload() );
+	if ( mReadEventHandler != nullptr ) {
+		mReadEventHandler( msg->get_payload() );
+	}
 }

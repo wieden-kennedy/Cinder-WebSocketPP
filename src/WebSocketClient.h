@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Wieden+Kennedy
+ * Copyright (c) 2015, Wieden+Kennedy
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or
@@ -35,10 +35,10 @@
 
 #pragma once
 
+#include "WebSocketConnection.h"
+
 #include "websocketpp/config/asio_no_tls_client.hpp"
 #include "websocketpp/client.hpp"
-
-#include "WebSocketConnection.h"
 
 class WebSocketClient : public WebSocketConnection
 {

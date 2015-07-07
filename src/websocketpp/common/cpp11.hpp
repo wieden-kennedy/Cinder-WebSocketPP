@@ -51,6 +51,11 @@
     // C++11 compiler via the __cplusplus macro or the user/build system
     // supplies one of the two preprocessor defines below:
     
+    // This is defined to allow other WebSocket++ common headers to enable
+    // C++11 features when they are detected by this file rather than
+    // duplicating the above logic in every common header.
+    #define _WEBSOCKETPP_CPP11_INTERNAL_
+    
     // _WEBSOCKETPP_CPP11_STRICT_
     //
     // This define reports to WebSocket++ that 100% of the language and library
@@ -74,6 +79,12 @@
     #endif
     #ifndef _WEBSOCKETPP_NULLPTR_TOKEN_
         #define _WEBSOCKETPP_NULLPTR_TOKEN_ nullptr
+    #endif
+    #ifndef _WEBSOCKETPP_MOVE_SEMANTICS_
+        #define _WEBSOCKETPP_MOVE_SEMANTICS_
+    #endif
+    #ifndef _WEBSOCKETPP_DEFAULT_DELETE_FUNCTIONS_
+        #define _WEBSOCKETPP_DEFAULT_DELETE_FUNCTIONS_
     #endif
     
     #ifndef __GNUC__
