@@ -149,7 +149,7 @@ ClientApp::ClientApp()
 
 void ClientApp::connect()
 {
-	mClient.connect( "ws://10.0.209.118:9002" );
+	mClient.connect( "ws://localhost:9002" );
 }
 
 void ClientApp::disconnect()
