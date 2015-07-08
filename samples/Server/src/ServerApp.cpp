@@ -73,6 +73,7 @@ private:
 
 #include "boost/algorithm/string.hpp"
 #include "cinder/app/RendererGl.h"
+#include "cinder/Log.h"
 #include "cinder/Utilities.h"
 
 using namespace ci;
@@ -91,15 +92,11 @@ ServerApp::ServerApp()
 	mTextPrev	= "";
 
 	// Connect event handlers
-	mServer.connectConnectEventHandler( [ & ]()
+	mServer.connectCloseEventHandler( [ & ]()
 	{
-		mText = "Connected";
+		mText = "Connection closed";
 	} );
-	mServer.connectDisconnectEventHandler( [ & ]()
-	{
-		mText = "Disconnected";
-	} );
-	mServer.connectErrorEventHandler( [ & ]( string err )
+	mServer.connectFailEventHandler( [ & ]( string err )
 	{
 		mText = "Error";
 		if ( !err.empty() ) {
@@ -110,6 +107,17 @@ ServerApp::ServerApp()
 	{
 		mText = "Interrupted";
 	} );
+	mServer.connectMessageEventHandler( [ &]( string msg )
+	{
+		mText = "Message received";
+		if ( !msg.empty() ) {
+			mText += ": " + msg;
+		}
+	} );
+	mServer.connectOpenEventHandler( [ & ]()
+	{
+		mText = "Connection opened";
+	} );
 	mServer.connectPingEventHandler( [ & ]( string msg )
 	{
 		mText = "Pinged";
@@ -117,11 +125,23 @@ ServerApp::ServerApp()
 			mText += ": " + msg;
 		}
 	} );
-	mServer.connectReadEventHandler( [ & ]( string msg )
+	mServer.connectSocketInitEventHandler( [ & ]()
 	{
-		mText = "Read from " + mServer.getServer().get_connection()->get_remote_endpoint();
-		if ( !msg.empty() ) {
-			mText += ": " + msg;
+		// This routine reads the address of the incoming connection
+		// and prints it to the console
+		asio::ip::tcp::socket* socket = mServer.getSocket();
+		if ( socket != nullptr ) {
+			asio::ip::address address = socket->remote_endpoint().address();
+			string host = "";
+			if ( address.is_v4() ) {
+				host += address.to_v4().to_string();
+			} else if ( address.is_v6() ) {
+				host += address.to_v6().to_string();
+			} else {
+				host += address.to_string();
+			}
+			host += ":" + toString( socket->remote_endpoint().port() );
+			CI_LOG_V( host );
 		}
 	} );
 
@@ -161,6 +181,7 @@ void ServerApp::update()
 	}
 
 	if ( mTextPrev != mText ) {
+		CI_LOG_V( mText );
 		mTextPrev = mText;
 		if ( mText.empty() ) {
 			mTexture.reset();

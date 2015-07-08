@@ -44,12 +44,17 @@ WebSocketClient::WebSocketClient()
 	
 	mClient.init_asio();
 
-	mClient.set_close_handler( websocketpp::lib::bind( &WebSocketClient::onDisconnect, this, &mClient, std::placeholders::_1 ) );
-	mClient.set_interrupt_handler( websocketpp::lib::bind( &WebSocketClient::onInterrupt, this, &mClient, std::placeholders::_1 ) );
-	mClient.set_open_handler( websocketpp::lib::bind( &WebSocketClient::onConnect, this, &mClient, std::placeholders::_1 ) );
-	mClient.set_pong_handler( websocketpp::lib::bind( &WebSocketClient::onPing, this, &mClient, std::placeholders::_1, std::placeholders::_2 ) );
-	mClient.set_message_handler( websocketpp::lib::bind( &WebSocketClient::onRead, this, &mClient, std::placeholders::_1, std::placeholders::_2 ) );
-	mClient.set_fail_handler( websocketpp::lib::bind( &WebSocketClient::onFail, this, &mClient, std::placeholders::_1 ) );
+	mClient.set_close_handler(			bind( &WebSocketClient::onClose,		this, &mClient, std::placeholders::_1 ) );
+	mClient.set_fail_handler(			bind( &WebSocketClient::onFail,			this, &mClient, std::placeholders::_1 ) );
+	mClient.set_http_handler(			bind( &WebSocketClient::onHttp,			this, &mClient, std::placeholders::_1 ) );
+	mClient.set_interrupt_handler(		bind( &WebSocketClient::onInterrupt,	this, &mClient, std::placeholders::_1 ) );
+	mClient.set_message_handler(		bind( &WebSocketClient::onMessage,		this, &mClient, std::placeholders::_1, std::placeholders::_2 ) );
+	mClient.set_open_handler(			bind( &WebSocketClient::onOpen,			this, &mClient, std::placeholders::_1 ) );
+	mClient.set_pong_handler(			bind( &WebSocketClient::onPong,			this, &mClient, std::placeholders::_1, std::placeholders::_2 ) );
+	mClient.set_socket_init_handler(	bind( &WebSocketClient::onSocketInit,	this, &mClient, std::placeholders::_1, std::placeholders::_2 ) );
+	mClient.set_tcp_post_init_handler(	bind( &WebSocketClient::onTcpPostInit,	this, &mClient, std::placeholders::_1 ) );
+	mClient.set_tcp_pre_init_handler(	bind( &WebSocketClient::onTcpPreInit,	this, &mClient, std::placeholders::_1 ) );
+	mClient.set_validate_handler(		bind( &WebSocketClient::onValidate,		this, &mClient, std::placeholders::_1 ) );
 }
 
 WebSocketClient::~WebSocketClient()
@@ -66,29 +71,29 @@ void WebSocketClient::connect( const std::string& uri )
 		websocketpp::lib::error_code err;
 		Client::connection_ptr conn = mClient.get_connection( uri, err );
 		if ( err ) {
-			if ( mErrorEventHandler != nullptr ) {
-				mErrorEventHandler( err.message() );
+			if ( mFailEventHandler != nullptr ) {
+				mFailEventHandler( err.message() );
 			}
 		} else {
 			if ( conn ) {
 				mClient.connect( conn );
 			} else {
-				if ( mErrorEventHandler != nullptr ) {
-					mErrorEventHandler( "Unable to resolve address." );
+				if ( mFailEventHandler != nullptr ) {
+					mFailEventHandler( "Unable to resolve address." );
 				}
 			}
 		}
 	} catch ( const std::exception& ex ) {
-		if ( mErrorEventHandler != nullptr ) {
-			mErrorEventHandler( ex.what() );
+		if ( mFailEventHandler != nullptr ) {
+			mFailEventHandler( ex.what() );
 		}
     } catch ( websocketpp::lib::error_code err ) {
-		if ( mErrorEventHandler != nullptr ) {
-			mErrorEventHandler( err.message() );
+		if ( mFailEventHandler != nullptr ) {
+			mFailEventHandler( err.message() );
 		}
     } catch ( ... ) {
-		if ( mErrorEventHandler != nullptr ) {
-			mErrorEventHandler( "An unknown exception occurred." );
+		if ( mFailEventHandler != nullptr ) {
+			mFailEventHandler( "An unknown exception occurred." );
 		}
     }
 }
@@ -98,8 +103,8 @@ void WebSocketClient::disconnect()
 	websocketpp::lib::error_code err;
 	mClient.close( mHandle, websocketpp::close::status::going_away, "", err );
 	if ( err ) {
-		if ( mErrorEventHandler != nullptr ) {
-			mErrorEventHandler( err.message() );
+		if ( mFailEventHandler != nullptr ) {
+			mFailEventHandler( err.message() );
 		}
 	}
 }
@@ -109,8 +114,8 @@ void WebSocketClient::ping( const string& msg )
 	try {
 		mClient.get_con_from_hdl( mHandle )->ping( msg );
 	} catch( ... ) {
-		if ( mErrorEventHandler != nullptr ) {
-			mErrorEventHandler( "Ping failed." );
+		if ( mFailEventHandler != nullptr ) {
+			mFailEventHandler( "Ping failed." );
 		}
 	}
 }
@@ -123,15 +128,15 @@ void WebSocketClient::poll()
 void WebSocketClient::write( const std::string& msg )
 {
 	if ( msg.empty() ) {
-		if ( mErrorEventHandler != nullptr ) {
-			mErrorEventHandler( "Cannot send empty message." );
+		if ( mFailEventHandler != nullptr ) {
+			mFailEventHandler( "Cannot send empty message." );
 		}
 	} else {
 		websocketpp::lib::error_code err;
 		mClient.send( mHandle, msg, websocketpp::frame::opcode::TEXT, err );
 		if ( err ) {
-			if ( mErrorEventHandler != nullptr ) {
-				mErrorEventHandler( err.message() );
+			if ( mFailEventHandler != nullptr ) {
+				mFailEventHandler( err.message() );
 			}
 		} else {
 			if ( mWriteEventHandler != nullptr ) {
@@ -151,26 +156,26 @@ const WebSocketClient::Client& WebSocketClient::getClient() const
 	return mClient;
 }
 
-void WebSocketClient::onConnect( Client* client, websocketpp::connection_hdl handle ) 
+void WebSocketClient::onClose( Client* client, websocketpp::connection_hdl handle ) 
 {
-	mHandle = handle;
-	if ( mConnectEventHandler != nullptr ) {
-		mConnectEventHandler();
-	}
-}
-
-void WebSocketClient::onDisconnect( Client* client, websocketpp::connection_hdl handle ) 
-{
-	if ( mDisconnectEventHandler != nullptr ) {
-		mDisconnectEventHandler();
+	if ( mCloseEventHandler != nullptr ) {
+		mCloseEventHandler();
 	}
 }
 
 void WebSocketClient::onFail( Client* client, websocketpp::connection_hdl handle ) 
 {
 	mHandle = handle;
-	if ( mErrorEventHandler != nullptr ) {
-		mErrorEventHandler( "Transfer failed." );
+	if ( mFailEventHandler != nullptr ) {
+		mFailEventHandler( "Transfer failed." );
+	}
+}
+
+void WebSocketClient::onHttp( Client* client, websocketpp::connection_hdl handle )
+{
+	mHandle = handle;
+	if ( mHttpEventHandler != nullptr ) {
+		mHttpEventHandler();
 	}
 }
 
@@ -182,7 +187,23 @@ void WebSocketClient::onInterrupt( Client* client, websocketpp::connection_hdl h
 	}
 }
 
-void WebSocketClient::onPing( Client* client, websocketpp::connection_hdl handle, string msg )
+void WebSocketClient::onMessage( Client* client, websocketpp::connection_hdl handle, MessageRef msg )
+{
+	mHandle = handle;
+	if ( mMessageEventHandler != nullptr ) {
+		mMessageEventHandler( msg->get_payload() );
+	}
+}
+
+void WebSocketClient::onOpen( Client* client, websocketpp::connection_hdl handle )
+{
+	mHandle = handle;
+	if ( mOpenEventHandler != nullptr ) {
+		mOpenEventHandler();
+	}
+}
+
+void WebSocketClient::onPong( Client* client, websocketpp::connection_hdl handle, string msg )
 {
 	mHandle = handle;
 	if ( mPingEventHandler != nullptr ) {
@@ -190,10 +211,36 @@ void WebSocketClient::onPing( Client* client, websocketpp::connection_hdl handle
 	}
 }
 
-void WebSocketClient::onRead( Client* client, websocketpp::connection_hdl handle, MessageRef msg ) 
+void WebSocketClient::onSocketInit( Client* client, websocketpp::connection_hdl handle, asio::ip::tcp::socket& socket )
 {
 	mHandle = handle;
-	if ( mReadEventHandler != nullptr ) {
-		mReadEventHandler( msg->get_payload() );
+	mSocket = &socket;
+	if ( mSocketInitEventHandler != nullptr ) {
+		mSocketInitEventHandler();
 	}
+}
+
+void WebSocketClient::onTcpPostInit( Client* client, websocketpp::connection_hdl handle )
+{
+	mHandle = handle;
+	if ( mTcpPostInitEventHandler != nullptr ) {
+		mTcpPostInitEventHandler();
+	}
+}
+ 
+void WebSocketClient::onTcpPreInit( Client* client, websocketpp::connection_hdl handle )
+{
+	mHandle = handle;
+	if ( mTcpPreInitEventHandler != nullptr ) {
+		mTcpPreInitEventHandler();
+	}
+}
+ 
+bool WebSocketClient::onValidate( Client* client, websocketpp::connection_hdl handle )
+{
+	mHandle = handle;
+	if ( mValidateEventHandler != nullptr ) {
+		mValidateEventHandler();
+	}
+	return true;
 }

@@ -50,6 +50,7 @@
 #define BOOST_DATE_TIME_NO_LIB
 #define BOOST_REGEX_NO_LIB
 
+#include "asio.hpp"
 #include "websocketpp/common/random.hpp"
 #include "websocketpp/common/thread.hpp"
 #include "websocketpp/common/connection_hdl.hpp"
@@ -63,70 +64,119 @@ public:
 	virtual void	ping( const std::string& msg ) = 0;
 	virtual void	poll() = 0;
 	virtual void	write( const std::string& msg ) = 0;
-	
-	template<typename T, typename Y>
-	inline void		connectConnectEventHandler( T eventHandler, Y* eventHandlerObject )
-	{
-		connectConnectEventHandler( std::bind( eventHandler, eventHandlerObject ) );
-	}
-	void			connectConnectEventHandler( const std::function<void()>& eventHandler );
-	void			disconnectConnectEventHandler();
+
+	const websocketpp::connection_hdl&	getHandle() const;
+	asio::ip::tcp::socket*				getSocket() const;
 
 	template<typename T, typename Y>
-	inline void		connectDisconnectEventHandler( T eventHandler, Y* eventHandlerObject )
+	inline void	connectCloseEventHandler( T eventHandler, Y* eventHandlerObject )
 	{
-		connectDisconnectEventHandler( std::bind( eventHandler, eventHandlerObject ) );
+		connectCloseEventHandler( std::bind( eventHandler, eventHandlerObject ) );
 	}
-	void			connectDisconnectEventHandler( const std::function<void()>& eventHandler );
-	void			disconnectDisconnectEventHandler();
+	void		connectCloseEventHandler( const std::function<void()>& eventHandler );
+	void		disconnectCloseEventHandler();
 
 	template<typename T, typename Y>
-	inline void		connectErrorEventHandler( T eventHandler, Y* eventHandlerObject )
+	inline void	connectFailEventHandler( T eventHandler, Y* eventHandlerObject )
 	{
-		connectErrorEventHandler( std::bind( eventHandler, eventHandlerObject ) );
+		connectFailEventHandler( std::bind( eventHandler, eventHandlerObject ) );
 	}
-	void			connectErrorEventHandler( const std::function<void( std::string )>& eventHandler );
-	void			disconnectErrorEventHandler();
+	void		connectFailEventHandler( const std::function<void( std::string )>& eventHandler );
+	void		disconnectFailEventHandler();
 
 	template<typename T, typename Y>
-	inline void		connectInterruptEventHandler( T eventHandler, Y* eventHandlerObject )
+	inline void	connectHttpEventHandler( T eventHandler, Y* eventHandlerObject )
+	{
+		connectHttpEventHandler( std::bind( eventHandler, eventHandlerObject ) );
+	}
+	void		connectHttpEventHandler( const std::function<void()>& eventHandler );
+	void		disconnectHttpEventHandler();
+
+	template<typename T, typename Y>
+	inline void	connectInterruptEventHandler( T eventHandler, Y* eventHandlerObject )
 	{
 		connectInterruptEventHandler( std::bind( eventHandler, eventHandlerObject ) );
 	}
-	void			connectInterruptEventHandler( const std::function<void()>& eventHandler );
-	void			disconnectInterruptEventHandler();
+	void		connectInterruptEventHandler( const std::function<void()>& eventHandler );
+	void		disconnectInterruptEventHandler();
 
 	template<typename T, typename Y>
-	inline void		connectPingEventHandler( T eventHandler, Y* eventHandlerObject )
+	inline void	connectMessageEventHandler( T eventHandler, Y* eventHandlerObject )
+	{
+		connectMessageEventHandler( std::bind( eventHandler, eventHandlerObject, std::placeholders::_1 ) );
+	}
+	void		connectMessageEventHandler( const std::function<void( std::string )>& eventHandler );
+	void		disconnectMessageEventHandler();
+
+	template<typename T, typename Y>
+	inline void	connectOpenEventHandler( T eventHandler, Y* eventHandlerObject )
+	{
+		connectOpenEventHandler( std::bind( eventHandler, eventHandlerObject ) );
+	}
+	void		connectOpenEventHandler( const std::function<void()>& eventHandler );
+	void		disconnectOpenEventHandler();
+
+	template<typename T, typename Y>
+	inline void	connectPingEventHandler( T eventHandler, Y* eventHandlerObject )
 	{
 		connectPingEventHandler( std::bind( eventHandler, eventHandlerObject, std::placeholders::_1 ) );
 	}
-	void			connectPingEventHandler( const std::function<void( std::string )>& eventHandler );
-	void			disconnectPingEventHandler();
+	void		connectPingEventHandler( const std::function<void( std::string )>& eventHandler );
+	void		disconnectPingEventHandler();
 
 	template<typename T, typename Y>
-	inline void		connectReadEventHandler( T eventHandler, Y* eventHandlerObject )
+	inline void	connectSocketInitEventHandler( T eventHandler, Y* eventHandlerObject )
 	{
-		connectReadEventHandler( std::bind( eventHandler, eventHandlerObject, std::placeholders::_1 ) );
+		connectSocketInitEventHandler( std::bind( eventHandler, eventHandlerObject, std::placeholders::_1 ) );
 	}
-	void			connectReadEventHandler( const std::function<void( std::string )>& eventHandler );
-	void			disconnectReadEventHandler();
+	void		connectSocketInitEventHandler( const std::function<void()>& eventHandler );
+	void		disconnectSocketInitEventHandler();
 
 	template<typename T, typename Y>
-	inline void		connectWriteEventHandler( T eventHandler, Y* eventHandlerObject )
+	inline void	connectTcpPostInitEventHandler( T eventHandler, Y* eventHandlerObject )
+	{
+		connectTcpPostInitEventHandler( std::bind( eventHandler, eventHandlerObject ) );
+	}
+	void		connectTcpPostInitEventHandler( const std::function<void()>& eventHandler );
+	void		disconnectTcpPostInitEventHandler();
+
+	template<typename T, typename Y>
+	inline void	connectTcpPreInitEventHandler( T eventHandler, Y* eventHandlerObject )
+	{
+		connectTcpPreInitEventHandler( std::bind( eventHandler, eventHandlerObject ) );
+	}
+	void		connectTcpPreInitEventHandler( const std::function<void()>& eventHandler );
+	void		disconnectTcpPreInitEventHandler();
+
+	template<typename T, typename Y>
+	inline void	connectValidateEventHandler( T eventHandler, Y* eventHandlerObject )
+	{
+		connectValidateEventHandler( std::bind( eventHandler, eventHandlerObject ) );
+	}
+	void		connectValidateEventHandler( const std::function<bool()>& eventHandler );
+	void		disconnectValidateEventHandler();
+
+	template<typename T, typename Y>
+	inline void	connectWriteEventHandler( T eventHandler, Y* eventHandlerObject )
 	{
 		connectWriteEventHandler( std::bind( eventHandler, eventHandlerObject ) );
 	}
-	void			connectWriteEventHandler( const std::function<void()>& eventHandler );
-	void			disconnectWriteEventHandler();
+	void		connectWriteEventHandler( const std::function<void()>& eventHandler );
+	void		disconnectWriteEventHandler();
 protected:
 	websocketpp::connection_hdl			mHandle;
+	asio::ip::tcp::socket*				mSocket;
 	
-	std::function<void()>				mConnectEventHandler;
-	std::function<void()>				mDisconnectEventHandler;
-	std::function<void( std::string )>	mErrorEventHandler;
+	std::function<void()>				mCloseEventHandler;
+	std::function<void( std::string )>	mFailEventHandler;
+	std::function<void()>				mHttpEventHandler;
 	std::function<void()>				mInterruptEventHandler;
+	std::function<void( std::string )>	mMessageEventHandler;
+	std::function<void()>				mOpenEventHandler;
 	std::function<void( std::string )>	mPingEventHandler;
-	std::function<void( std::string )>	mReadEventHandler;
+	std::function<void()>				mSocketInitEventHandler;
+	std::function<void()>				mTcpPreInitEventHandler;
+	std::function<void()>				mTcpPostInitEventHandler;
+	std::function<bool()>				mValidateEventHandler;
 	std::function<void()>				mWriteEventHandler;
 };

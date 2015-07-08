@@ -42,10 +42,11 @@
 
 class WebSocketServer : public WebSocketConnection
 {
-protected:
-	typedef websocketpp::server<websocketpp::config::asio>	Server;
-	typedef Server::message_ptr								MessageRef;
 public:
+	typedef websocketpp::server<websocketpp::config::asio>	Server;
+	typedef Server::connection_ptr							ConnectionRef;
+	typedef Server::message_ptr								MessageRef;
+
 	WebSocketServer();
 	~WebSocketServer();
 	
@@ -61,10 +62,15 @@ public:
 protected:
 	Server			mServer;
 	
-	void			onConnect( Server* server, websocketpp::connection_hdl handle );
-	void			onDisconnect( Server* server, websocketpp::connection_hdl handle );
+	void			onClose( Server* server, websocketpp::connection_hdl handle );
 	void			onFail( Server* server, websocketpp::connection_hdl handle );
+	void			onHttp( Server* server, websocketpp::connection_hdl handle );
 	void			onInterrupt( Server* server, websocketpp::connection_hdl handle );
+	void			onMessage( Server* server, websocketpp::connection_hdl handle, MessageRef msg );
+	void			onOpen( Server* server, websocketpp::connection_hdl handle );
 	bool			onPing( Server* server, websocketpp::connection_hdl handle, std::string msg );
-	void			onRead( Server* server, websocketpp::connection_hdl handle, MessageRef msg );
+	void			onSocketInit( Server* server, websocketpp::connection_hdl handle, asio::ip::tcp::socket& socket );
+	void			onTcpPostInit( Server* server, websocketpp::connection_hdl handle );
+	void			onTcpPreInit( Server* server, websocketpp::connection_hdl handle );
+	bool			onValidate( Server* server, websocketpp::connection_hdl handle );
 };

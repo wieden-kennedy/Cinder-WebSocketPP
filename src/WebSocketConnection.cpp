@@ -75,51 +75,69 @@
 using namespace std;
 
 WebSocketConnection::WebSocketConnection()
-: mConnectEventHandler( nullptr ), mDisconnectEventHandler( nullptr ),
-mErrorEventHandler( nullptr ), mInterruptEventHandler( nullptr ),
-mPingEventHandler( nullptr ), mReadEventHandler( nullptr ),
-mWriteEventHandler( nullptr )
-{}
+: mCloseEventHandler( nullptr ), mFailEventHandler( nullptr ), 
+mHttpEventHandler( nullptr ), mInterruptEventHandler( nullptr ), 
+mMessageEventHandler( nullptr ), mOpenEventHandler( nullptr ), 
+mPingEventHandler( nullptr ), mSocket( nullptr ), mSocketInitEventHandler( nullptr ),
+mTcpPostInitEventHandler( nullptr ), mTcpPreInitEventHandler( nullptr ), 
+mValidateEventHandler( nullptr ), mWriteEventHandler( nullptr )
+{
+}
 
 WebSocketConnection::~WebSocketConnection()
 {
-	disconnectConnectEventHandler();
-	disconnectDisconnectEventHandler();
-	disconnectErrorEventHandler();
+	disconnectCloseEventHandler();
+	disconnectFailEventHandler();
+	disconnectHttpEventHandler();
 	disconnectInterruptEventHandler();
+	disconnectMessageEventHandler();
+	disconnectOpenEventHandler();
 	disconnectPingEventHandler();
-	disconnectReadEventHandler();
+	disconnectSocketInitEventHandler();
+	disconnectTcpPostInitEventHandler();
+	disconnectTcpPreInitEventHandler();
+	disconnectValidateEventHandler();
 	disconnectWriteEventHandler();
 }
 
-void WebSocketConnection::connectConnectEventHandler( const function<void()>& eventHandler )
+const websocketpp::connection_hdl& WebSocketConnection::getHandle() const
 {
-	mConnectEventHandler = eventHandler;
+	return mHandle;
 }
 
-void WebSocketConnection::disconnectConnectEventHandler()
+asio::ip::tcp::socket* WebSocketConnection::getSocket() const
 {
-	mConnectEventHandler = nullptr;
+	return mSocket;
 }
 
-void WebSocketConnection::connectDisconnectEventHandler( const function<void()>& eventHandler )
+void WebSocketConnection::connectCloseEventHandler( const function<void()>& eventHandler )
 {
-	mDisconnectEventHandler = eventHandler;
+	mCloseEventHandler = eventHandler;
 }
 
-void WebSocketConnection::disconnectDisconnectEventHandler()
+void WebSocketConnection::disconnectCloseEventHandler()
 {
-	mDisconnectEventHandler = nullptr;
+	mCloseEventHandler = nullptr;
 }
 
-void WebSocketConnection::connectErrorEventHandler( const function<void( string )>& eventHandler )
+void WebSocketConnection::connectFailEventHandler( const function<void( string )>& eventHandler )
 {
-	mErrorEventHandler = eventHandler;
+	mFailEventHandler = eventHandler;
 }
 
-void WebSocketConnection::disconnectErrorEventHandler()
+void WebSocketConnection::disconnectFailEventHandler()
 {
-	mErrorEventHandler = nullptr;
+	mFailEventHandler = nullptr;
+}
+
+void WebSocketConnection::connectHttpEventHandler( const function<void()>& eventHandler )
+{
+	mHttpEventHandler = eventHandler;
+}
+
+void WebSocketConnection::disconnectHttpEventHandler()
+{
+	mHttpEventHandler = nullptr;
 }
 
 void WebSocketConnection::connectInterruptEventHandler( const function<void()>& eventHandler )
@@ -132,6 +150,26 @@ void WebSocketConnection::disconnectInterruptEventHandler()
 	mInterruptEventHandler = nullptr;
 }
 
+void WebSocketConnection::connectMessageEventHandler( const function<void( string )>& eventHandler )
+{
+	mMessageEventHandler = eventHandler;
+}
+
+void WebSocketConnection::disconnectMessageEventHandler()
+{
+	mMessageEventHandler = nullptr;
+}
+
+void WebSocketConnection::connectOpenEventHandler( const function<void()>& eventHandler )
+{
+	mOpenEventHandler = eventHandler;
+}
+
+void WebSocketConnection::disconnectOpenEventHandler()
+{
+	mOpenEventHandler = nullptr;
+}
+
 void WebSocketConnection::connectPingEventHandler( const function<void( string )>& eventHandler )
 {
 	mPingEventHandler = eventHandler;
@@ -142,15 +180,46 @@ void WebSocketConnection::disconnectPingEventHandler()
 	mPingEventHandler = nullptr;
 }
 
-void WebSocketConnection::connectReadEventHandler( const function<void( string )>& eventHandler )
+void WebSocketConnection::connectSocketInitEventHandler( const function<void()>& eventHandler )
 {
-	mReadEventHandler = eventHandler;
+	mSocketInitEventHandler = eventHandler;
 }
 
-void WebSocketConnection::disconnectReadEventHandler()
+void WebSocketConnection::disconnectSocketInitEventHandler()
 {
-	mReadEventHandler = nullptr;
+	mSocketInitEventHandler = nullptr;
 }
+
+void WebSocketConnection::connectTcpPostInitEventHandler( const function<void()>& eventHandler )
+{
+	mTcpPostInitEventHandler = eventHandler;
+}
+
+void WebSocketConnection::disconnectTcpPostInitEventHandler()
+{
+	mTcpPostInitEventHandler = nullptr;
+}
+
+void WebSocketConnection::connectTcpPreInitEventHandler( const function<void()>& eventHandler )
+{
+	mTcpPreInitEventHandler = eventHandler;
+}
+
+void WebSocketConnection::disconnectTcpPreInitEventHandler()
+{
+	mTcpPreInitEventHandler = nullptr;
+}
+
+void WebSocketConnection::connectValidateEventHandler( const function<bool()>& eventHandler )
+{
+	mValidateEventHandler = eventHandler;
+}
+
+void WebSocketConnection::disconnectValidateEventHandler()
+{
+	mValidateEventHandler = nullptr;
+}
+
 
 void WebSocketConnection::connectWriteEventHandler( const function<void()>& eventHandler )
 {

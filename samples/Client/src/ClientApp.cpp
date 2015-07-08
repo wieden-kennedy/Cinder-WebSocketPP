@@ -80,6 +80,7 @@ private:
 
 #include "boost/algorithm/string.hpp"
 #include "cinder/app/RendererGl.h"
+#include "cinder/Log.h"
 #include "cinder/Utilities.h"
 
 using namespace ci;
@@ -94,15 +95,11 @@ ClientApp::ClientApp()
 	mTextPrev	= mText;
 
 	// Connect event handlers
-	mClient.connectConnectEventHandler( [ & ]()
+	mClient.connectCloseEventHandler( [ & ]()
 	{
-		mText = "Connected";
+		mText = "Connection closed";
 	} );
-	mClient.connectDisconnectEventHandler( [ & ]()
-	{
-		mText = "Disconnected";
-	} );
-	mClient.connectErrorEventHandler( [ & ]( string err )
+	mClient.connectFailEventHandler( [ & ]( string err )
 	{
 		mText = "Error";
 		if ( !err.empty() ) {
@@ -113,17 +110,21 @@ ClientApp::ClientApp()
 	{
 		mText = "Interrupted";
 	} );
+	mClient.connectMessageEventHandler( [ & ]( string msg )
+	{
+		mText = "Message received";
+		if ( !msg.empty() ) {
+			mText += ": " + msg;
+		}
+	} );
+	mClient.connectOpenEventHandler( [ & ]()
+	{
+		mText = "Connection opened";
+	} );
 	mClient.connectPingEventHandler( [ & ]( string msg )
 	{
 		mText = "Ponged";
 		if ( msg.empty() ) {
-			mText += ": " + msg;
-		}
-	} );
-	mClient.connectReadEventHandler( [ & ]( string msg )
-	{
-		mText = "Read";
-		if ( !msg.empty() ) {
 			mText += ": " + msg;
 		}
 	} );
@@ -189,6 +190,7 @@ void ClientApp::update()
 	}
 
 	if ( mTextPrev != mText ) {
+		CI_LOG_V( mText );
 		mTextPrev = mText;
 		if ( mText.empty() ) {
 			mTexture.reset();
