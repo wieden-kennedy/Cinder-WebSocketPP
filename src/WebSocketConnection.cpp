@@ -84,6 +84,11 @@ mValidateEventHandler( nullptr ), mWriteEventHandler( nullptr )
 {
 }
 
+WebSocketConnection::WebSocketConnection( const WebSocketConnection& rhs )
+{
+	*this = rhs;
+}
+
 WebSocketConnection::~WebSocketConnection()
 {
 	disconnectCloseEventHandler();
@@ -98,6 +103,25 @@ WebSocketConnection::~WebSocketConnection()
 	disconnectTcpPreInitEventHandler();
 	disconnectValidateEventHandler();
 	disconnectWriteEventHandler();
+}
+
+WebSocketConnection& WebSocketConnection::operator=( const WebSocketConnection& rhs )
+{
+	mHandle						= rhs.mHandle;
+	mSocket						= rhs.mSocket;
+	mCloseEventHandler			= rhs.mCloseEventHandler;
+	mFailEventHandler			= rhs.mFailEventHandler;
+	mHttpEventHandler			= rhs.mHttpEventHandler;
+	mInterruptEventHandler		= rhs.mInterruptEventHandler;
+	mMessageEventHandler		= rhs.mMessageEventHandler;
+	mOpenEventHandler			= rhs.mOpenEventHandler;
+	mPingEventHandler			= rhs.mPingEventHandler;
+	mSocketInitEventHandler		= rhs.mSocketInitEventHandler;
+	mTcpPreInitEventHandler		= rhs.mTcpPreInitEventHandler;
+	mTcpPostInitEventHandler	= rhs.mTcpPostInitEventHandler;
+	mValidateEventHandler		= rhs.mValidateEventHandler;
+	mWriteEventHandler			= rhs.mWriteEventHandler;
+	return *this;
 }
 
 const websocketpp::connection_hdl& WebSocketConnection::getHandle() const

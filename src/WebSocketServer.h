@@ -48,7 +48,10 @@ public:
 	typedef Server::message_ptr								MessageRef;
 
 	WebSocketServer();
+	WebSocketServer( const WebSocketServer& rhs );
 	~WebSocketServer();
+	
+	WebSocketServer& operator=( const WebSocketServer& rhs );
 	
 	void			cancel();
 	void			listen( uint16_t port = 80 );
@@ -60,6 +63,7 @@ public:
 	Server&			getServer();
 	const Server&	getServer() const;
 protected:
+	void			initServer();
 	Server			mServer;
 	
 	void			onClose( Server* server, websocketpp::connection_hdl handle );

@@ -48,7 +48,10 @@ public:
 	typedef websocketpp::config::asio_client::message_type::ptr		MessageRef;
 
 	WebSocketClient();
+	WebSocketClient( const WebSocketClient& rhs );
 	~WebSocketClient();
+	
+	WebSocketClient& operator=( const WebSocketClient& rhs );
 
 	void			connect( const std::string& uri );
 	void			disconnect();
@@ -59,6 +62,7 @@ public:
 	Client&			getClient();
 	const Client&	getClient() const;
 protected:
+	void			initClient();
 	Client			mClient;
 	
 	void			onClose( Client* client, websocketpp::connection_hdl handle );

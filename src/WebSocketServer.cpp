@@ -43,22 +43,12 @@ using namespace std;
 
 WebSocketServer::WebSocketServer()
 {
-	mServer.set_access_channels( websocketpp::log::alevel::all );
-	mServer.clear_access_channels( websocketpp::log::alevel::frame_payload );
-	
-	mServer.init_asio();
-	
-	mServer.set_close_handler(			bind( &WebSocketServer::onClose,		this, &mServer, std::placeholders::_1 ) );
-	mServer.set_fail_handler(			bind( &WebSocketServer::onFail,			this, &mServer, std::placeholders::_1 ) );
-	mServer.set_http_handler(			bind( &WebSocketServer::onHttp,			this, &mServer, std::placeholders::_1 ) );
-	mServer.set_interrupt_handler(		bind( &WebSocketServer::onInterrupt,	this, &mServer, std::placeholders::_1 ) );
-	mServer.set_message_handler(		bind( &WebSocketServer::onMessage,		this, &mServer, std::placeholders::_1, std::placeholders::_2 ) );
-	mServer.set_open_handler(			bind( &WebSocketServer::onOpen,			this, &mServer, std::placeholders::_1 ) );
-	mServer.set_ping_handler(			bind( &WebSocketServer::onPing,			this, &mServer, std::placeholders::_1, std::placeholders::_2 ) );
-	mServer.set_socket_init_handler(	bind( &WebSocketServer::onSocketInit,	this, &mServer, std::placeholders::_1, std::placeholders::_2 ) );
-	mServer.set_tcp_post_init_handler(	bind( &WebSocketServer::onTcpPostInit,	this, &mServer, std::placeholders::_1 ) );
-	mServer.set_tcp_pre_init_handler(	bind( &WebSocketServer::onTcpPreInit,	this, &mServer, std::placeholders::_1 ) );
-	mServer.set_validate_handler(		bind( &WebSocketServer::onValidate,		this, &mServer, std::placeholders::_1 ) );
+	initServer();
+}
+
+WebSocketServer::WebSocketServer( const WebSocketServer& rhs )
+{
+	*this = rhs;
 }
 
 WebSocketServer::~WebSocketServer()
@@ -67,6 +57,28 @@ WebSocketServer::~WebSocketServer()
 		cancel();
 		mServer.stop();
 	}
+}
+
+WebSocketServer& WebSocketServer::operator=( const WebSocketServer& rhs )
+{
+	mHandle						= rhs.mHandle;
+	mSocket						= rhs.mSocket;
+	mCloseEventHandler			= rhs.mCloseEventHandler;
+	mFailEventHandler			= rhs.mFailEventHandler;
+	mHttpEventHandler			= rhs.mHttpEventHandler;
+	mInterruptEventHandler		= rhs.mInterruptEventHandler;
+	mMessageEventHandler		= rhs.mMessageEventHandler;
+	mOpenEventHandler			= rhs.mOpenEventHandler;
+	mPingEventHandler			= rhs.mPingEventHandler;
+	mSocketInitEventHandler		= rhs.mSocketInitEventHandler;
+	mTcpPreInitEventHandler		= rhs.mTcpPreInitEventHandler;
+	mTcpPostInitEventHandler	= rhs.mTcpPostInitEventHandler;
+	mValidateEventHandler		= rhs.mValidateEventHandler;
+	mWriteEventHandler			= rhs.mWriteEventHandler;
+	
+	initServer();
+	
+	return *this;
 }
 
 void WebSocketServer::cancel()
@@ -86,6 +98,26 @@ void WebSocketServer::cancel()
 			mFailEventHandler( "An unknown exception occurred." );
 		}
     }
+}
+
+void WebSocketServer::initServer()
+{
+	mServer.set_access_channels( websocketpp::log::alevel::all );
+	mServer.clear_access_channels( websocketpp::log::alevel::frame_payload );
+	
+	mServer.init_asio();
+	
+	mServer.set_close_handler(			bind( &WebSocketServer::onClose,		this, &mServer, std::placeholders::_1 ) );
+	mServer.set_fail_handler(			bind( &WebSocketServer::onFail,			this, &mServer, std::placeholders::_1 ) );
+	mServer.set_http_handler(			bind( &WebSocketServer::onHttp,			this, &mServer, std::placeholders::_1 ) );
+	mServer.set_interrupt_handler(		bind( &WebSocketServer::onInterrupt,	this, &mServer, std::placeholders::_1 ) );
+	mServer.set_message_handler(		bind( &WebSocketServer::onMessage,		this, &mServer, std::placeholders::_1, std::placeholders::_2 ) );
+	mServer.set_open_handler(			bind( &WebSocketServer::onOpen,			this, &mServer, std::placeholders::_1 ) );
+	mServer.set_ping_handler(			bind( &WebSocketServer::onPing,			this, &mServer, std::placeholders::_1, std::placeholders::_2 ) );
+	mServer.set_socket_init_handler(	bind( &WebSocketServer::onSocketInit,	this, &mServer, std::placeholders::_1, std::placeholders::_2 ) );
+	mServer.set_tcp_post_init_handler(	bind( &WebSocketServer::onTcpPostInit,	this, &mServer, std::placeholders::_1 ) );
+	mServer.set_tcp_pre_init_handler(	bind( &WebSocketServer::onTcpPreInit,	this, &mServer, std::placeholders::_1 ) );
+	mServer.set_validate_handler(		bind( &WebSocketServer::onValidate,		this, &mServer, std::placeholders::_1 ) );
 }
 
 void WebSocketServer::listen( uint16_t port )

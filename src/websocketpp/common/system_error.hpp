@@ -29,7 +29,7 @@
 #define WEBSOCKETPP_COMMON_SYSTEM_ERROR_HPP
 
 
-#include <websocketpp/common/cpp11.hpp>
+#include "websocketpp/common/cpp11.hpp"
 
 // If we've determined that we're in full C++11 mode and the user hasn't
 // explicitly disabled the use of C++11 system_error header, then prefer it to

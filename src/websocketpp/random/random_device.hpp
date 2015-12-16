@@ -28,7 +28,7 @@
 #ifndef WEBSOCKETPP_RANDOM_RANDOM_DEVICE_HPP
 #define WEBSOCKETPP_RANDOM_RANDOM_DEVICE_HPP
 
-#include <websocketpp/common/random.hpp>
+#include "websocketpp/common/random.hpp"
 
 namespace websocketpp {
 namespace random {

@@ -29,36 +29,36 @@
 #define WEBSOCKETPP_CONFIG_MINIMAL_HPP
 
 // Non-Policy common stuff
-#include <websocketpp/common/platforms.hpp>
-#include <websocketpp/common/cpp11.hpp>
-#include <websocketpp/common/stdint.hpp>
+#include "websocketpp/common/platforms.hpp"
+#include "websocketpp/common/cpp11.hpp"
+#include "websocketpp/common/stdint.hpp"
 
 // Concurrency
-#include <websocketpp/concurrency/none.hpp>
+#include "websocketpp/concurrency/none.hpp"
 
 // Transport
-#include <websocketpp/transport/stub/endpoint.hpp>
+#include "websocketpp/transport/stub/endpoint.hpp"
 
 // HTTP
-#include <websocketpp/http/request.hpp>
-#include <websocketpp/http/response.hpp>
+#include "websocketpp/http/request.hpp"
+#include "websocketpp/http/response.hpp"
 
 // Messages
-#include <websocketpp/message_buffer/message.hpp>
-#include <websocketpp/message_buffer/alloc.hpp>
+#include "websocketpp/message_buffer/message.hpp"
+#include "websocketpp/message_buffer/alloc.hpp"
 
 // Loggers
-#include <websocketpp/logger/stub.hpp>
+#include "websocketpp/logger/stub.hpp"
 
 // RNG
-#include <websocketpp/random/none.hpp>
+#include "websocketpp/random/none.hpp"
 
 // User stub base classes
-#include <websocketpp/endpoint_base.hpp>
-#include <websocketpp/connection_base.hpp>
+#include "websocketpp/endpoint_base.hpp"
+#include "websocketpp/connection_base.hpp"
 
 // Extensions
-#include <websocketpp/extensions/permessage_deflate/disabled.hpp>
+#include "websocketpp/extensions/permessage_deflate/disabled.hpp"
 
 namespace websocketpp {
 namespace config {

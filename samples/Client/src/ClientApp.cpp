@@ -35,7 +35,9 @@
 
 #include "cinder/app/App.h"
 #include "cinder/gl/gl.h"
+#if !defined( CINDER_COCOA_TOUCH )
 #include "cinder/params/Params.h"
+#endif
 #include "cinder/Text.h"
 
 #include "WebSocketClient.h"
@@ -53,8 +55,8 @@ class ClientApp : public ci::app::App
 public:
 	ClientApp();
 
-	void						draw() override;
-	void						update() override;
+	virtual void				draw() override;
+	virtual void				update() override;
 private:
 	// Web socket client
 	void						connect();
@@ -74,8 +76,10 @@ private:
 
 	// Parameters
 	float						mFrameRate;
+#if !defined( CINDER_COCOA_TOUCH )
 	bool						mFullScreen;
 	ci::params::InterfaceGlRef	mParams;
+#endif
 };
 
 #include "boost/algorithm/string.hpp"
@@ -130,11 +134,12 @@ ClientApp::ClientApp()
 	} );
 
 	mFrameRate	= 0.0f;
-	mFullScreen	= false;
 	mMessage	= "Hello, server!";
 	mPing		= false;
 	mPingTime	= getElapsedSeconds();
-
+#if !defined( CINDER_COCOA_TOUCH )
+	mFullScreen	= false;
+	
 	mParams = params::InterfaceGl::create( "CLIENT", ivec2( 200, 160 ) );
 	mParams->addParam( "Frame rate",	&mFrameRate, "", true );
 	mParams->addParam( "Fullscreen",	&mFullScreen ).key( "f" );
@@ -144,7 +149,7 @@ ClientApp::ClientApp()
 	mParams->addButton( "Disconnect",	[ & ]() { disconnect(); },	"key=d" );
 	mParams->addButton( "Write",		[ & ]() { write(); },		"key=w" );
 	mParams->addButton( "Quit",			[ & ]() { quit(); },		"key=q" );
-
+#endif
 	connect();
 }
 
@@ -169,8 +174,9 @@ void ClientApp::draw()
 		gl::enableAlphaBlending();
 		gl::draw( mTexture, getWindowCenter() - mSize * 0.5f );
 	}
-
+#if !defined( CINDER_COCOA_TOUCH )
 	mParams->draw();
+#endif
 }
 
 void ClientApp::update()
@@ -179,9 +185,11 @@ void ClientApp::update()
 
 	mFrameRate = getFrameRate();
 
+#if !defined( CINDER_COCOA_TOUCH )
 	if ( mFullScreen != isFullScreen() ) {
 		setFullScreen( mFullScreen );
 	}
+#endif
 
 	double e = getElapsedSeconds();
 	if ( mPing && e - mPingTime > 3.0 ) {

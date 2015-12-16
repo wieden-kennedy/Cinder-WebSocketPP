@@ -28,10 +28,10 @@
 #ifndef WEBSOCKETPP_ENDPOINT_HPP
 #define WEBSOCKETPP_ENDPOINT_HPP
 
-#include <websocketpp/connection.hpp>
+#include "websocketpp/connection.hpp"
 
-#include <websocketpp/logger/levels.hpp>
-#include <websocketpp/version.hpp>
+#include "websocketpp/logger/levels.hpp"
+#include "websocketpp/version.hpp"
 
 #include <string>
 
@@ -692,6 +692,6 @@ private:
 
 } // namespace websocketpp
 
-#include <websocketpp/impl/endpoint_impl.hpp>
+#include "websocketpp/impl/endpoint_impl.hpp"
 
 #endif // WEBSOCKETPP_ENDPOINT_HPP

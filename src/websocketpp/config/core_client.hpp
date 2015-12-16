@@ -29,40 +29,40 @@
 #define WEBSOCKETPP_CONFIG_CORE_CLIENT_HPP
 
 // Non-Policy common stuff
-#include <websocketpp/common/platforms.hpp>
-#include <websocketpp/common/cpp11.hpp>
-#include <websocketpp/common/stdint.hpp>
+#include "websocketpp/common/platforms.hpp"
+#include "websocketpp/common/cpp11.hpp"
+#include "websocketpp/common/stdint.hpp"
 
 // Concurrency
 #ifndef _WEBSOCKETPP_NO_THREADING_
-#include <websocketpp/concurrency/basic.hpp>
+#include "websocketpp/concurrency/basic.hpp"
 #else
-#include <websocketpp/concurrency/none.hpp>
+#include "websocketpp/concurrency/none.hpp"
 #endif
 
 // Transport
-#include <websocketpp/transport/iostream/endpoint.hpp>
+#include "websocketpp/transport/iostream/endpoint.hpp"
 
 // HTTP
-#include <websocketpp/http/request.hpp>
-#include <websocketpp/http/response.hpp>
+#include "websocketpp/http/request.hpp"
+#include "websocketpp/http/response.hpp"
 
 // Messages
-#include <websocketpp/message_buffer/message.hpp>
-#include <websocketpp/message_buffer/alloc.hpp>
+#include "websocketpp/message_buffer/message.hpp"
+#include "websocketpp/message_buffer/alloc.hpp"
 
 // Loggers
-#include <websocketpp/logger/basic.hpp>
+#include "websocketpp/logger/basic.hpp"
 
 // RNG
-#include <websocketpp/random/random_device.hpp>
+#include "websocketpp/random/random_device.hpp"
 
 // User stub base classes
-#include <websocketpp/endpoint_base.hpp>
-#include <websocketpp/connection_base.hpp>
+#include "websocketpp/endpoint_base.hpp"
+#include "websocketpp/connection_base.hpp"
 
 // Extensions
-#include <websocketpp/extensions/permessage_deflate/disabled.hpp>
+#include "websocketpp/extensions/permessage_deflate/disabled.hpp"
 
 namespace websocketpp {
 namespace config {

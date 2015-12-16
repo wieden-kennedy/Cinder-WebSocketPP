@@ -30,8 +30,8 @@
 
 #include <string>
 
-#include <websocketpp/common/memory.hpp>
-#include <websocketpp/http/parser.hpp>
+#include "websocketpp/common/memory.hpp"
+#include "websocketpp/http/parser.hpp"
 
 namespace websocketpp {
 namespace http {
@@ -119,6 +119,6 @@ private:
 } // namespace http
 } // namespace websocketpp
 
-#include <websocketpp/http/impl/request.hpp>
+#include "websocketpp/http/impl/request.hpp"
 
 #endif // HTTP_PARSER_REQUEST_HPP

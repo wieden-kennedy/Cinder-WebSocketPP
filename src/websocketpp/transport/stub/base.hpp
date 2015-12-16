@@ -28,8 +28,8 @@
 #ifndef WEBSOCKETPP_TRANSPORT_STUB_BASE_HPP
 #define WEBSOCKETPP_TRANSPORT_STUB_BASE_HPP
 
-#include <websocketpp/common/system_error.hpp>
-#include <websocketpp/common/cpp11.hpp>
+#include "websocketpp/common/system_error.hpp"
+#include "websocketpp/common/cpp11.hpp"
 
 #include <string>
 

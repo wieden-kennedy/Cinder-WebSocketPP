@@ -28,8 +28,8 @@
 #ifndef WEBSOCKETPP_TRANSPORT_BASE_HPP
 #define WEBSOCKETPP_TRANSPORT_BASE_HPP
 
-#include <websocketpp/common/functional.hpp>
-#include <websocketpp/common/system_error.hpp>
+#include "websocketpp/common/functional.hpp"
+#include "websocketpp/common/system_error.hpp"
 
 namespace websocketpp {
 /// Transport policies provide network connectivity and timers

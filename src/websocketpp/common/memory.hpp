@@ -28,7 +28,7 @@
 #ifndef WEBSOCKETPP_COMMON_MEMORY_HPP
 #define WEBSOCKETPP_COMMON_MEMORY_HPP
 
-#include <websocketpp/common/cpp11.hpp>
+#include "websocketpp/common/cpp11.hpp"
 
 // If we've determined that we're in full C++11 mode and the user hasn't
 // explicitly disabled the use of C++11 memory header, then prefer it to

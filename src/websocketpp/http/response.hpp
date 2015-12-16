@@ -31,7 +31,7 @@
 #include <iostream>
 #include <string>
 
-#include <websocketpp/http/parser.hpp>
+#include "websocketpp/http/parser.hpp"
 
 namespace websocketpp {
 namespace http {
@@ -183,6 +183,6 @@ private:
 } // namespace http
 } // namespace websocketpp
 
-#include <websocketpp/http/impl/response.hpp>
+#include "websocketpp/http/impl/response.hpp"
 
 #endif // HTTP_PARSER_RESPONSE_HPP

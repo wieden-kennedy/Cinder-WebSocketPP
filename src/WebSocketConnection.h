@@ -38,7 +38,7 @@
 #include "cinder/Cinder.h"
 
 #if defined( CINDER_MSW )
-	#define _WEBSOCKETPP_NOEXCEPT_TOKEN_
+	#define _WEBSOCKETPP_NOEXCEPT_TOKEN_ noexcept
 #endif
 #define _WEBSOCKETPP_INITIALIZER_LISTS_
 #define _WEBSOCKETPP_NULLPTR_
@@ -50,7 +50,7 @@
 #define BOOST_DATE_TIME_NO_LIB
 #define BOOST_REGEX_NO_LIB
 
-#include "asio.hpp"
+#include "asio/asio.hpp"
 #include "websocketpp/common/random.hpp"
 #include "websocketpp/common/thread.hpp"
 #include "websocketpp/common/connection_hdl.hpp"
@@ -59,7 +59,10 @@ class WebSocketConnection
 {
 public:
 	WebSocketConnection();
+	WebSocketConnection( const WebSocketConnection& rhs );
 	~WebSocketConnection();
+	
+	WebSocketConnection&	operator=( const WebSocketConnection& rhs );
 
 	virtual void	ping( const std::string& msg ) = 0;
 	virtual void	poll() = 0;

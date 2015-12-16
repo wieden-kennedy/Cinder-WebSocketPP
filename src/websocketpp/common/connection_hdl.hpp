@@ -28,7 +28,7 @@
 #ifndef WEBSOCKETPP_COMMON_CONNECTION_HDL_HPP
 #define WEBSOCKETPP_COMMON_CONNECTION_HDL_HPP
 
-#include <websocketpp/common/memory.hpp>
+#include "websocketpp/common/memory.hpp"
 
 namespace websocketpp {
 

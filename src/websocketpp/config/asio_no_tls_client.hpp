@@ -28,8 +28,8 @@
 #ifndef WEBSOCKETPP_CONFIG_ASIO_CLIENT_HPP
 #define WEBSOCKETPP_CONFIG_ASIO_CLIENT_HPP
 
-#include <websocketpp/config/core_client.hpp>
-#include <websocketpp/transport/asio/endpoint.hpp>
+#include "websocketpp/config/core_client.hpp"
+#include "websocketpp/transport/asio/endpoint.hpp"
 
 namespace websocketpp {
 namespace config {

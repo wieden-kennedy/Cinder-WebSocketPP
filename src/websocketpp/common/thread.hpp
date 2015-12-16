@@ -28,7 +28,7 @@
 #ifndef WEBSOCKETPP_COMMON_THREAD_HPP
 #define WEBSOCKETPP_COMMON_THREAD_HPP
 
-#include <websocketpp/common/cpp11.hpp>
+#include "websocketpp/common/cpp11.hpp"
 
 // If we autodetect C++11 and haven't been explicitly instructed to not use
 // C++11 threads, then set the defines that instructs the rest of this header
