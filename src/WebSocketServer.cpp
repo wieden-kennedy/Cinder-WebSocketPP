@@ -129,6 +129,31 @@ void WebSocketServer::run()
 	mServer.run();
 }
 
+void WebSocketServer::write( void const * msg, size_t len )
+{
+	if (len == 0){
+		if ( mFailEventHandler != nullptr ) {
+			mFailEventHandler( "Cannot send empty message." );
+		}
+	} else {
+		websocketpp::lib::error_code err;
+		mServer.send(mHandle,
+					 msg,
+					 len,
+					 websocketpp::frame::opcode::BINARY,
+					 err);
+		if (err) {
+			if (mFailEventHandler != nullptr) {
+				mFailEventHandler(err.message());
+			}
+		} else {
+			if (mWriteEventHandler != nullptr) {
+				mWriteEventHandler();
+			}
+		}
+	}
+}
+
 void WebSocketServer::write( const std::string& msg )
 {
 	if ( msg.empty() ) {
