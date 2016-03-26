@@ -14,9 +14,14 @@
 	<supports os="msw" />
 	
 	<sourcePattern>src/*.cpp</sourcePattern>
-	<headerPattern>src/*.h</headerPattern>
+    <headerPattern>src/*.h</headerPattern>
+    <headerPattern>src/*.hpp</headerPattern>
+    <source cinder="true">include/asio/asio.hpp</source>
+    <source cinder="true">include/asio</source>
+    <sourcePattern cinder="true">include/asio/*.hpp</sourcePattern>
 	
-	<includePath system="true">src</includePath>
+    <includePath system="true">src</includePath>
+    <includePath system="true">include/asio</includePath>
 	<platform os="msw">
 		<libraryPath>lib/msw</libraryPath>
 	</platform>
