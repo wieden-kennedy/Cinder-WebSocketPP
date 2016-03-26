@@ -145,6 +145,23 @@ void WebSocketClient::write( const std::string& msg )
 		}
 	}
 }
+void WebSocketClient::writeBinary(const void *ptr, size_t len)
+{
+	if (len > 0) {
+		websocketpp::lib::error_code err;
+		mClient.send(mHandle, ptr, len, websocketpp::frame::opcode::BINARY, err);
+		if (err) {
+			if (mFailEventHandler != nullptr) {
+				mFailEventHandler(err.message());
+			}
+		}
+		else {
+			if (mWriteEventHandler != nullptr) {
+				mWriteEventHandler();
+			}
+		}
+	}
+}
 
 WebSocketClient::Client& WebSocketClient::getClient()
 {
