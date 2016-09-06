@@ -37,9 +37,10 @@
 
 #include "cinder/Cinder.h"
 
-#if defined( CINDER_MSW )
-	#define _WEBSOCKETPP_NOEXCEPT_TOKEN_
-#endif
+// Bruce Lane: replaced by _NOEXCEPT to compile with VS2015 to avoid error C2694
+//#if defined( CINDER_MSW )
+//	#define _WEBSOCKETPP_NOEXCEPT_TOKEN_
+//#endif
 #define _WEBSOCKETPP_INITIALIZER_LISTS_
 #define _WEBSOCKETPP_NULLPTR_
 #define _WEBSOCKETPP_CPP11_FUNCTIONAL_

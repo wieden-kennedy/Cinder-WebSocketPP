@@ -43,27 +43,27 @@ using namespace std;
 
 WebSocketServer::WebSocketServer()
 {
-	mServer.set_access_channels(websocketpp::log::alevel::all);
-	mServer.clear_access_channels(websocketpp::log::alevel::frame_payload);
-
+	mServer.set_access_channels( websocketpp::log::alevel::all );
+	mServer.clear_access_channels( websocketpp::log::alevel::frame_payload );
+	
 	mServer.init_asio();
-
-	mServer.set_close_handler(bind(&WebSocketServer::onClose, this, &mServer, std::placeholders::_1));
-	mServer.set_fail_handler(bind(&WebSocketServer::onFail, this, &mServer, std::placeholders::_1));
-	mServer.set_http_handler(bind(&WebSocketServer::onHttp, this, &mServer, std::placeholders::_1));
-	mServer.set_interrupt_handler(bind(&WebSocketServer::onInterrupt, this, &mServer, std::placeholders::_1));
-	mServer.set_message_handler(bind(&WebSocketServer::onMessage, this, &mServer, std::placeholders::_1, std::placeholders::_2));
-	mServer.set_open_handler(bind(&WebSocketServer::onOpen, this, &mServer, std::placeholders::_1));
-	mServer.set_ping_handler(bind(&WebSocketServer::onPing, this, &mServer, std::placeholders::_1, std::placeholders::_2));
-	mServer.set_socket_init_handler(bind(&WebSocketServer::onSocketInit, this, &mServer, std::placeholders::_1, std::placeholders::_2));
-	mServer.set_tcp_post_init_handler(bind(&WebSocketServer::onTcpPostInit, this, &mServer, std::placeholders::_1));
-	mServer.set_tcp_pre_init_handler(bind(&WebSocketServer::onTcpPreInit, this, &mServer, std::placeholders::_1));
-	mServer.set_validate_handler(bind(&WebSocketServer::onValidate, this, &mServer, std::placeholders::_1));
+	
+	mServer.set_close_handler(			bind( &WebSocketServer::onClose,		this, &mServer, std::placeholders::_1 ) );
+	mServer.set_fail_handler(			bind( &WebSocketServer::onFail,			this, &mServer, std::placeholders::_1 ) );
+	mServer.set_http_handler(			bind( &WebSocketServer::onHttp,			this, &mServer, std::placeholders::_1 ) );
+	mServer.set_interrupt_handler(		bind( &WebSocketServer::onInterrupt,	this, &mServer, std::placeholders::_1 ) );
+	mServer.set_message_handler(		bind( &WebSocketServer::onMessage,		this, &mServer, std::placeholders::_1, std::placeholders::_2 ) );
+	mServer.set_open_handler(			bind( &WebSocketServer::onOpen,			this, &mServer, std::placeholders::_1 ) );
+	mServer.set_ping_handler(			bind( &WebSocketServer::onPing,			this, &mServer, std::placeholders::_1, std::placeholders::_2 ) );
+	mServer.set_socket_init_handler(	bind( &WebSocketServer::onSocketInit,	this, &mServer, std::placeholders::_1, std::placeholders::_2 ) );
+	mServer.set_tcp_post_init_handler(	bind( &WebSocketServer::onTcpPostInit,	this, &mServer, std::placeholders::_1 ) );
+	mServer.set_tcp_pre_init_handler(	bind( &WebSocketServer::onTcpPreInit,	this, &mServer, std::placeholders::_1 ) );
+	mServer.set_validate_handler(		bind( &WebSocketServer::onValidate,		this, &mServer, std::placeholders::_1 ) );
 }
 
 WebSocketServer::~WebSocketServer()
 {
-	if (!mServer.stopped()) {
+	if ( !mServer.stopped() ) {
 		cancel();
 		mServer.stop();
 	}
@@ -73,55 +73,48 @@ void WebSocketServer::cancel()
 {
 	try {
 		mServer.stop_listening();
-	}
-	catch (const std::exception& ex) {
-		if (mFailEventHandler != nullptr) {
-			mFailEventHandler(ex.what());
+	} catch ( const std::exception& ex ) {
+		if ( mFailEventHandler != nullptr ) {
+			mFailEventHandler( ex.what() );
 		}
-	}
-	catch (websocketpp::lib::error_code err) {
-		if (mFailEventHandler != nullptr) {
-			mFailEventHandler(err.message());
+    } catch ( websocketpp::lib::error_code err ) {
+		if ( mFailEventHandler != nullptr ) {
+			mFailEventHandler( err.message() );
 		}
-	}
-	catch (...) {
-		if (mFailEventHandler != nullptr) {
-			mFailEventHandler("An unknown exception occurred.");
+    } catch ( ... ) {
+		if ( mFailEventHandler != nullptr ) {
+			mFailEventHandler( "An unknown exception occurred." );
 		}
-	}
+    }
 }
 
-void WebSocketServer::listen(uint16_t port)
+void WebSocketServer::listen( uint16_t port )
 {
 	try {
-		mServer.listen(port);
+		mServer.listen( port );
 		mServer.start_accept();
-	}
-	catch (const std::exception& ex) {
-		if (mFailEventHandler != nullptr) {
-			mFailEventHandler(ex.what());
+	} catch ( const std::exception& ex ) {
+		if ( mFailEventHandler != nullptr ) {
+			mFailEventHandler( ex.what() );
 		}
-	}
-	catch (websocketpp::lib::error_code err) {
-		if (mFailEventHandler != nullptr) {
-			mFailEventHandler(err.message());
+    } catch ( websocketpp::lib::error_code err ) {
+		if ( mFailEventHandler != nullptr ) {
+			mFailEventHandler( err.message() );
 		}
-	}
-	catch (...) {
-		if (mFailEventHandler != nullptr) {
-			mFailEventHandler("An unknown exception occurred.");
+    } catch ( ... ) {
+		if ( mFailEventHandler != nullptr ) {
+			mFailEventHandler( "An unknown exception occurred." );
 		}
-	}
+    }
 }
 
-void WebSocketServer::ping(const string& msg)
+void WebSocketServer::ping( const string& msg )
 {
 	try {
-		mServer.get_con_from_hdl(mHandle)->pong(msg);
-	}
-	catch (...) {
-		if (mFailEventHandler != nullptr) {
-			mFailEventHandler("Ping failed.");
+		mServer.get_con_from_hdl( mHandle )->pong( msg );
+	} catch( ... ) {
+		if ( mFailEventHandler != nullptr ) {
+			mFailEventHandler( "Ping failed." );
 		}
 	}
 }
@@ -136,40 +129,46 @@ void WebSocketServer::run()
 	mServer.run();
 }
 
-void WebSocketServer::write(const std::string& msg)
+void WebSocketServer::write( void const * msg, size_t len )
 {
-	if (msg.empty()) {
-		if (mFailEventHandler != nullptr) {
-			mFailEventHandler("Cannot send empty message.");
+	if (len == 0){
+		if ( mFailEventHandler != nullptr ) {
+			mFailEventHandler( "Cannot send empty message." );
 		}
-	}
-	else {
+	} else {
 		websocketpp::lib::error_code err;
-		mServer.send(mHandle, msg, websocketpp::frame::opcode::TEXT, err);
+		mServer.send(mHandle,
+					 msg,
+					 len,
+					 websocketpp::frame::opcode::BINARY,
+					 err);
 		if (err) {
 			if (mFailEventHandler != nullptr) {
 				mFailEventHandler(err.message());
 			}
-		}
-		else {
+		} else {
 			if (mWriteEventHandler != nullptr) {
 				mWriteEventHandler();
 			}
 		}
 	}
 }
-void WebSocketServer::writeBinary(const void *ptr, size_t len)
+
+void WebSocketServer::write( const std::string& msg )
 {
-	if (len > 0) {
-		websocketpp::lib::error_code err;
-		mServer.send(mHandle, ptr, len, websocketpp::frame::opcode::BINARY, err);
-		if (err) {
-			if (mFailEventHandler != nullptr) {
-				mFailEventHandler(err.message());
-			}
+	if ( msg.empty() ) {
+		if ( mFailEventHandler != nullptr ) {
+			mFailEventHandler( "Cannot send empty message." );
 		}
-		else {
-			if (mWriteEventHandler != nullptr) {
+	} else {
+		websocketpp::lib::error_code err;
+		mServer.send( mHandle, msg, websocketpp::frame::opcode::TEXT, err );
+		if ( err ) {
+			if ( mFailEventHandler != nullptr ) {
+				mFailEventHandler( err.message() );
+			}
+		} else {
+			if ( mWriteEventHandler != nullptr ) {
 				mWriteEventHandler();
 			}
 		}
@@ -186,91 +185,91 @@ const WebSocketServer::Server& WebSocketServer::getServer() const
 	return mServer;
 }
 
-void WebSocketServer::onClose(Server* server, websocketpp::connection_hdl handle)
+void WebSocketServer::onClose( Server* server, websocketpp::connection_hdl handle )
 {
-	if (mCloseEventHandler != nullptr) {
+	if ( mCloseEventHandler != nullptr ) {
 		mCloseEventHandler();
 	}
 }
 
-void WebSocketServer::onFail(Server* server, websocketpp::connection_hdl handle)
+void WebSocketServer::onFail( Server* server, websocketpp::connection_hdl handle )
 {
 	mHandle = handle;
-	if (mFailEventHandler != nullptr) {
-		mFailEventHandler("Transfer failed.");
+	if ( mFailEventHandler != nullptr ) {
+		mFailEventHandler( "Transfer failed." );
 	}
 }
 
-void WebSocketServer::onHttp(Server* server, websocketpp::connection_hdl handle)
+void WebSocketServer::onHttp( Server* server, websocketpp::connection_hdl handle )
 {
 	mHandle = handle;
-	if (mHttpEventHandler != nullptr) {
+	if ( mHttpEventHandler != nullptr ) {
 		mHttpEventHandler();
 	}
 }
 
-void WebSocketServer::onInterrupt(Server* server, websocketpp::connection_hdl handle)
+void WebSocketServer::onInterrupt( Server* server, websocketpp::connection_hdl handle )
 {
 	mHandle = handle;
-	if (mInterruptEventHandler != nullptr) {
+	if ( mInterruptEventHandler != nullptr ) {
 		mInterruptEventHandler();
 	}
 }
 
-void WebSocketServer::onMessage(Server* server, websocketpp::connection_hdl handle, MessageRef msg)
+void WebSocketServer::onMessage( Server* server, websocketpp::connection_hdl handle, MessageRef msg )
 {
 	mHandle = handle;
-	if (mMessageEventHandler != nullptr) {
-		mMessageEventHandler(msg->get_payload());
+	if ( mMessageEventHandler != nullptr ) {
+		mMessageEventHandler( msg->get_payload() );
 	}
 }
 
-void WebSocketServer::onOpen(Server* server, websocketpp::connection_hdl handle)
+void WebSocketServer::onOpen( Server* server, websocketpp::connection_hdl handle )
 {
 	mHandle = handle;
-	if (mOpenEventHandler != nullptr) {
+	if ( mOpenEventHandler != nullptr ) {
 		mOpenEventHandler();
 	}
 }
 
-bool WebSocketServer::onPing(Server* server, websocketpp::connection_hdl handle, string msg)
+bool WebSocketServer::onPing( Server* server, websocketpp::connection_hdl handle, string msg )
 {
 	mHandle = handle;
-	if (mPingEventHandler != nullptr) {
-		mPingEventHandler(msg);
+	if ( mPingEventHandler != nullptr ) {
+		mPingEventHandler( msg );
 	}
 	return true;
 }
 
-void WebSocketServer::onSocketInit(Server* server, websocketpp::connection_hdl handle, asio::ip::tcp::socket& socket)
+void WebSocketServer::onSocketInit( Server* server, websocketpp::connection_hdl handle, asio::ip::tcp::socket& socket )
 {
 	mHandle = handle;
 	mSocket = &socket;
-	if (mSocketInitEventHandler != nullptr) {
+	if ( mSocketInitEventHandler != nullptr ) {
 		mSocketInitEventHandler();
 	}
 }
 
-void WebSocketServer::onTcpPostInit(Server* server, websocketpp::connection_hdl handle)
+void WebSocketServer::onTcpPostInit( Server* server, websocketpp::connection_hdl handle )
 {
 	mHandle = handle;
-	if (mTcpPostInitEventHandler != nullptr) {
+	if ( mTcpPostInitEventHandler != nullptr ) {
 		mTcpPostInitEventHandler();
 	}
 }
 
-void WebSocketServer::onTcpPreInit(Server* server, websocketpp::connection_hdl handle)
+void WebSocketServer::onTcpPreInit( Server* server, websocketpp::connection_hdl handle )
 {
 	mHandle = handle;
-	if (mTcpPreInitEventHandler != nullptr) {
+	if ( mTcpPreInitEventHandler != nullptr ) {
 		mTcpPreInitEventHandler();
 	}
 }
 
-bool WebSocketServer::onValidate(Server* server, websocketpp::connection_hdl handle)
+bool WebSocketServer::onValidate( Server* server, websocketpp::connection_hdl handle )
 {
 	mHandle = handle;
-	if (mValidateEventHandler != nullptr) {
+	if ( mValidateEventHandler != nullptr ) {
 		mValidateEventHandler();
 	}
 	return true;

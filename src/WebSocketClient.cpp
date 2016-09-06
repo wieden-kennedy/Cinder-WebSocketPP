@@ -68,6 +68,9 @@ WebSocketClient::~WebSocketClient()
 void WebSocketClient::connect( const std::string& uri )
 {
 	try {
+		if (mClient.stopped()){
+			mClient.reset();
+		}
 		websocketpp::lib::error_code err;
 		Client::connection_ptr conn = mClient.get_connection( uri, err );
 		if ( err ) {
@@ -145,6 +148,34 @@ void WebSocketClient::write( const std::string& msg )
 		}
 	}
 }
+void WebSocketClient::write(void const * msg, size_t len)
+{
+	if (len == 0) {
+		if (mFailEventHandler != nullptr) {
+			mFailEventHandler("Cannot send empty message.");
+		}
+	}
+	else {
+		websocketpp::lib::error_code err;
+		mClient.send(mHandle,
+			msg,
+			len,
+			websocketpp::frame::opcode::BINARY,
+			err);
+		if (err) {
+			if (mFailEventHandler != nullptr) {
+				mFailEventHandler(err.message());
+			}
+		}
+		else {
+			if (mWriteEventHandler != nullptr) {
+				mWriteEventHandler();
+			}
+		}
+	}
+}
+
+/* Bruce LANE, check if needed: 
 void WebSocketClient::writeBinary(const void *ptr, size_t len)
 {
 	if (len > 0) {
@@ -161,7 +192,7 @@ void WebSocketClient::writeBinary(const void *ptr, size_t len)
 			}
 		}
 	}
-}
+}*/
 
 WebSocketClient::Client& WebSocketClient::getClient()
 {

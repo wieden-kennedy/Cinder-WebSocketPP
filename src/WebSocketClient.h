@@ -55,7 +55,8 @@ public:
 	void			ping( const std::string& msg = "" );
 	void			poll();
 	void			write( const std::string& msg );
-	void			writeBinary(const void *ptr, size_t len);
+	// Bruce LANE, check if needed: void			writeBinary(const void *ptr, size_t len);
+	void			write(void const * msg, size_t len);
 
 	Client&			getClient();
 	const Client&	getClient() const;

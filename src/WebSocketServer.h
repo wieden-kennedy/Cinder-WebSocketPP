@@ -56,7 +56,7 @@ public:
 	void			poll();
 	void			run();
 	void			write( const std::string& msg );
-	void			writeBinary(const void *ptr, size_t len);
+	void			write( void const * msg, size_t len );
 
 	Server&			getServer();
 	const Server&	getServer() const;
