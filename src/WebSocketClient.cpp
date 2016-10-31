@@ -68,6 +68,9 @@ WebSocketClient::~WebSocketClient()
 void WebSocketClient::connect( const std::string& uri )
 {
 	try {
+		if (mClient.stopped()){
+			mClient.reset();
+		}
 		websocketpp::lib::error_code err;
 		Client::connection_ptr conn = mClient.get_connection( uri, err );
 		if ( err ) {
