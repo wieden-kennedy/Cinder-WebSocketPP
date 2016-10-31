@@ -56,7 +56,8 @@ public:
 	void			poll();
 	void			run();
 	void			write( const std::string& msg );
-	
+	void			write( void const * msg, size_t len );
+
 	Server&			getServer();
 	const Server&	getServer() const;
 protected:
