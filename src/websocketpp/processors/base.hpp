@@ -162,7 +162,7 @@ class processor_category : public lib::error_category {
 public:
     processor_category() {}
 
-    char const * name() const _WEBSOCKETPP_NOEXCEPT_TOKEN_ {
+    char const * name() const _NOEXCEPT {
         return "websocketpp.processor";
     }
 

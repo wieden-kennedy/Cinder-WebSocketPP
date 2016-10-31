@@ -106,7 +106,7 @@ namespace error {
 /// Error category related to asio transport socket policies
 class socket_category : public lib::error_category {
 public:
-    char const * name() const _WEBSOCKETPP_NOEXCEPT_TOKEN_ {
+    char const * name() const _NOEXCEPT {
         return "websocketpp.transport.asio.socket";
     }
 
