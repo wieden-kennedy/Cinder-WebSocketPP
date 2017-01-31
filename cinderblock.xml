@@ -18,7 +18,7 @@
     	<headerPattern>src/*.hpp</headerPattern>
  	
     	<includePath system="true">src</includePath>
-    	<includePath cinder="true">include/asio</includePath>
+    	<includePath system="true" cinder="true">include/asio</includePath>
 	
 	
 	<platform os="msw">
