@@ -61,8 +61,8 @@ enum value {
 class category : public lib::error_category {
 public:
     category() {}
-	
-    const char *name() const _NOEXCEPT {
+
+    const char *name() const _WEBSOCKETPP_NOEXCEPT_TOKEN_ {
         return "websocketpp.extension";
     }
 
@@ -78,7 +78,7 @@ public:
     }
 };
 
-inline const lib::error_category& get_category() {
+inline lib::error_category const & get_category() {
     static category instance;
     return instance;
 }

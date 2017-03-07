@@ -142,9 +142,6 @@ inline custom_alloc_handler<Handler> make_custom_alloc_handler(
 template <typename config>
 class endpoint;
 
-typedef lib::function<void(lib::asio::error_code const &)>
-    socket_shutdown_handler;
-
 typedef lib::function<void (lib::asio::error_code const & ec,
     size_t bytes_transferred)> async_read_handler;
 
@@ -186,7 +183,7 @@ enum value {
 /// Asio transport error category
 class category : public lib::error_category {
 public:
-    char const * name() const _NOEXCEPT {
+    char const * name() const _WEBSOCKETPP_NOEXCEPT_TOKEN_ {
         return "websocketpp.transport.asio";
     }
 

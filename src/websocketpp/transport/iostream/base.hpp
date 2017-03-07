@@ -86,7 +86,7 @@ class category : public lib::error_category {
     public:
     category() {}
 
-    char const * name() const _NOEXCEPT {
+    char const * name() const _WEBSOCKETPP_NOEXCEPT_TOKEN_ {
         return "websocketpp.transport.iostream";
     }
 
