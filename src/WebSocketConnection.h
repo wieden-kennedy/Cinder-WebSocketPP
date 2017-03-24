@@ -41,6 +41,8 @@
 //#if defined( CINDER_MSW )
 //	#define _WEBSOCKETPP_NOEXCEPT_TOKEN_
 //#endif
+#define ASIO_STANDALONE
+#define ASIO_HAS_STD_ATOMIC
 #define _WEBSOCKETPP_INITIALIZER_LISTS_
 #define _WEBSOCKETPP_NULLPTR_
 #define _WEBSOCKETPP_CPP11_FUNCTIONAL_
@@ -48,8 +50,11 @@
 #define _WEBSOCKETPP_CPP11_MEMORY_
 #define _WEBSOCKETPP_CPP11_THREAD_
 #define _WEBSOCKETPP_CPP11_RANDOM_DEVICE_
+#define _WEBSOCKETPP_CPP11_TYPE_TRAITS_
 #define BOOST_DATE_TIME_NO_LIB
 #define BOOST_REGEX_NO_LIB
+
+#include <set>
 
 #include "asio.hpp"
 #include "websocketpp/common/random.hpp"

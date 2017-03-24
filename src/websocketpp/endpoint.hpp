@@ -85,6 +85,9 @@ public:
     // TODO: organize these
     typedef typename connection_type::termination_handler termination_handler;
 
+    // This would be ideal. Requires C++11 though
+    //friend connection;
+
     explicit endpoint(bool p_is_server)
       : m_alog(config::alog_level, log::channel_type_hint::access)
       , m_elog(config::elog_level, log::channel_type_hint::error)
@@ -456,11 +459,11 @@ public:
      * The default is set by the max_http_body_size value from the template
      * config
      *
-     * @since 0.5.0
+     * @since 0.5.1
      *
      * @param new_value The value to set as the maximum message size.
      */
-    void get_max_http_body_size(size_t new_value) {
+    void set_max_http_body_size(size_t new_value) {
         m_max_http_body_size = new_value;
     }
 

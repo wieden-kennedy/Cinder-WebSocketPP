@@ -140,7 +140,10 @@ enum value {
     unsupported_version,
 
     /// HTTP parse error
-    http_parse_error
+    http_parse_error,
+    
+    /// Extension negotiation failed
+    extension_neg_failed
 }; // enum value
 
 
@@ -148,7 +151,7 @@ class category : public lib::error_category {
 public:
     category() {}
 
-    char const * name() const _NOEXCEPT {
+    char const * name() const _WEBSOCKETPP_NOEXCEPT_TOKEN_ {
         return "websocketpp";
     }
 
@@ -216,6 +219,8 @@ public:
                 return "Unsupported version";
             case error::http_parse_error:
                 return "HTTP parse error";
+            case error::extension_neg_failed:
+                return "Extension negotiation failed";
             default:
                 return "Unknown";
         }
